@@ -2,10 +2,12 @@ import { Schema, model } from 'mongoose';
 
 const MedicalHistorySchema = new Schema(
   {
-    medical_history_code: { type: Number, required: true, unique: true },
-    time_stamp: { type: String },
-    treatment_procedure: { type: String },
-    patient_treatment: { type: String },
+    medical_history_id: { type: Number, required: true, unique: true },
+    historyDate: {type:Date},
+    diagnosis: {type: Schema.Types.ObjectId, ref: 'Diagnosis'},
+    treatment: {type: Schema.Types.ObjectId, ref:'Treatment'},
+    prescription: {type:Schema.Types.ObjectId, ref:'Prescription'},
+    medicalStaff: {type:Schema.Types.ObjectId, ref:'MedicalStaff'},
     patient: { type: Schema.Types.ObjectId, ref: 'Patient' },
   },
   { timestamps: true }
