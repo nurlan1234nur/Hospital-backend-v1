@@ -4,8 +4,8 @@ import bodyParser from "body-parser";
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
-import AuthRouter from "./routes/auth.routes.js";
-import HealthRouter from "./routes/health.routes.js";
+import AuthRouter from "./interfaces/routes/auth.routes.js";
+// import HealthRouter from "./routes/health.routes.js";
 
 const app = express();
 app.use(express.json());
@@ -26,7 +26,6 @@ mongoose
 
 app.use(bodyParser.json());
 
-app.use("/api/v1", AuthRouter);
-app.use("/api/v1", HealthRouter);
+app.use("/api/auth", AuthRouter);
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

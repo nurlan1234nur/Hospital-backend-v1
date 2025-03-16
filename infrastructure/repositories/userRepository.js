@@ -1,11 +1,9 @@
-const User = require("../../domain/models/User.model");
+import User from "../../domain/models/User.model.js";
 
-const createUser = async (userData) => {
-    return await User.create(userData);
+export const createUser = async (userData) => {
+  return await User.create(userData);
 };
 
-const findUserByEmail = async (email) => {
-    return await User.findOne({ email });
+export const findUserByEmail = async (email) => {
+  return await User.findOne({ email });
 };
-
-module.exports = { createUser, findUserByEmail };
