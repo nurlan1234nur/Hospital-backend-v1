@@ -1,15 +1,25 @@
 import bcrypt from "bcrypt";
 import {
-  createUser,
+  createPatient,
   findUserByEmail,
 } from "../../infrastructure/repositories/userRepository.js";
 
-const registerUser = async ({
+const registerPatient = async ({
   firstname,
   lastname,
   email,
   password,
   phoneNumber,
+  type,
+  register,
+  address,
+  sisiID,
+  occupation,
+  education,
+  school,
+  birthOfDate,
+  gender, 
+
 }) => {
   const existingUser = await findUserByEmail(email);
   if (existingUser) {
@@ -17,13 +27,22 @@ const registerUser = async ({
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  return await createUser({
+  return await createPatient({
     firstname,
     lastname,
     email,
     phoneNumber,
     password: hashedPassword,
+    type,
+    register,
+    address,
+    sisiID,
+    occupation,
+    education,
+    school,
+    birthOfDate,
+    gender, 
   });
 };
 
-export default registerUser;
+export default registerPatient;

@@ -1,9 +1,9 @@
-import registerUser from "../../application/use_cases/registerUser.js";
+import registerPatient from "../../application/use_cases/registerPatient.js";
 import loginUser from "../../application/use_cases/loginUser.js";
 
 export const signUp = async (req, res) => {
   try {
-    const user = await registerUser(req.body);
+    const user = await registerPatient(req.body);
     res.status(201).json({ message: "Хэрэглэгч бүртгэгдлээ!", user });
   } catch (error) {
     res.status(400).json({ error: error.message });
