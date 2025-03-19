@@ -1,13 +1,12 @@
 import bcrypt from "bcrypt";
-import { createMedicalStaff, findUserByEmail } from "../../infrastructure/repositories/userRepository.js";
+import { createNurse, findUserByEmail } from "../../infrastructure/repositories/userRepository.js";
 
-const registerMedicalStaff = async ({
+const registerNurse = async ({
   firstname,
   lastname,
   email,
   password,
   phoneNumber,
-  position,
   specialization,
 }) => {
   const existingUser = await findUserByEmail(email);
@@ -16,16 +15,15 @@ const registerMedicalStaff = async ({
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  return await createMedicalStaff({
+  return await createNurse({
     firstname,
     lastname,
     email,
     phoneNumber,
     password: hashedPassword,
-    position,
     specialization,
     
   });
 };
 
-export default registerMedicalStaff;
+export default registerNurse;
