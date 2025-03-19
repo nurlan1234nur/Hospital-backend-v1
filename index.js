@@ -5,7 +5,6 @@ import mongoose from "mongoose";
 import cors from "cors";
 import bodyParser from "body-parser";
 import AuthRouter from "./interfaces/routes/auth.routes.js";
-import AdminRouter from "./interfaces/routes/admin.routes.js";
 
 const app = express();
 app.use(express.json());
@@ -25,6 +24,5 @@ mongoose
   .catch((err) => console.error("MongoDB connection error:", err));
 
   app.use("/api/auth", AuthRouter);
-  app.use("/api/admin", AdminRouter);  // mount admin routes
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

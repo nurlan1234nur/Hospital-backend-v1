@@ -24,7 +24,7 @@ const registerMedicalStaff = async ({
     password: hashedPassword,
     position,
     specialization,
-    // Additional fields as needed
+    
   });
 };
 
