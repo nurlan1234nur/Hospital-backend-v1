@@ -1,7 +1,8 @@
 import registerPatient from "../../application/use_cases/registerPatient.js";
 import loginUser from "../../application/use_cases/loginUser.js";
 import registerAdmin from "../../application/use_cases/registerAdmin.js";
-import registerMedicalStaff from "../../application/use_cases/registerDoctor.js";
+import registerDoctor from "../../application/use_cases/registerDoctor.js";
+import registerNurse from "../../application/use_cases/registerNurse.js";
 
 export const signUp = async (req, res) => {
   try {
@@ -28,17 +29,17 @@ export const signUpAdmin = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
-export const registerDoctor = async (req, res) => {
+export const signUpDoctor = async (req, res) => {
   try {
-    const staff = await registerMedicalStaff(req.body);
+    const staff = await registerDoctor(req.body);
     res.status(201).json({ message: "Мэдийн ажилтан бүртгэгдлээ!", staff });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
-export const registerNurse = async (req, res) => {
+export const signUpNurse = async (req, res) => {
   try {
-    const staff = await registerMedicalStaff(req.body);
+    const staff = await registerNurse(req.body);
     res.status(201).json({ message: "Мэдийн ажилтан бүртгэгдлээ!", staff });
   } catch (error) {
     res.status(400).json({ error: error.message });
