@@ -14,8 +14,8 @@ export const signUp = async (req, res) => {
 
 export const signIn = async (req, res) => {
   try {
-    const { token } = await loginUser(req.body);
-    res.status(200).json({ message: "Амжилттай нэвтэрлээ!", token });
+    const { token, role } = await loginUser(req.body);
+    res.status(200).json({ message: "Амжилттай нэвтэрлээ!", token, role});
   } catch (error) {
     res.status(401).json({ error: error.message });
   }

@@ -19,7 +19,7 @@ const loginUser = async ({ email, password }) => {
     { expiresIn: "1h" }
   );
 
-  return { token };
+  return { token, role: user.role};
 };
 
 export default loginUser;
