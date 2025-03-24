@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import bodyParser from "body-parser";
 import AuthRouter from "./interfaces/routes/auth.routes.js";
+import PatientRouter from "./interfaces/routes/patient.routes.js";
 import HealthRouter from "./interfaces/routes/health.routes.js";
 
 const app = express();
@@ -25,6 +26,7 @@ mongoose
   .catch((err) => console.error("MongoDB connection error:", err));
 
 app.use("/api/auth", AuthRouter);
-app.use("/", HealthRouter);
+app.use("/api/patient", PatientRouter);
+app.use("/api", HealthRouter);
 console.log("working");
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
