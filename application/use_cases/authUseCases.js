@@ -4,10 +4,16 @@ import {
   createAdmin,
   createMedicalStaff,
   createPatient,
-} from "../../infrastructure/repositories/userRepository.js";
+} from "../../infrastructure/repositories/authRepository.js";
 import { generateAccessToken, generateRefreshToken } from "../../utils/jwt.js";
+import { createError } from "../../utils/error.js";
 
 export const createUserUseCases = () => {
+  const hashPassword = async (password) => {
+    const salt = await bcrypt.genSalt(10);
+    return await bcrypt.hash(password, salt);
+  };
+
   const registerAdmin = async ({
     firstname,
     lastname,
@@ -15,39 +21,44 @@ export const createUserUseCases = () => {
     password,
     phoneNumber,
   }) => {
-    // Check if email is already registered
     const existingUser = await findUserByEmail(email);
     if (existingUser) {
-      throw new Error("Имэйл бүртгэгдсэн байна!");
+      throw createError("Имэйл бүртгэгдсэн байна!", 409);
     }
 
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await hashPassword(password);
 
-    // Create the admin user
-    return await createAdmin({
+    const admin = await createAdmin({
       firstname,
       lastname,
       email,
       phoneNumber,
       password: hashedPassword,
     });
+
+    const payload = { id: admin._id, role: admin.role };
+    const accessToken = generateAccessToken(payload);
+    const refreshToken = generateRefreshToken(payload);
+
+    return { accessToken, refreshToken, admin };
   };
 
   const login = async ({ email, password }) => {
     const user = await findUserByEmail(email);
     if (!user) {
-      throw new Error("Invalid email or password.");
+      throw createError("Нэвтрэх нэр эсвэл нууц үг буруу байна!", 401);
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      throw new Error("Invalid email or password.");
+      throw createError("Нэвтрэх нэр эсвэл нууц үг буруу байна!", 401);
     }
-    const payload = { id: user._id };
+
+    const payload = { id: user._id, role: user.role };
     const accessToken = generateAccessToken(payload);
     const refreshToken = generateRefreshToken(payload);
-    return { accessToken, refreshToken };
+
+    return { accessToken, refreshToken, user };
   };
 
   const registerDoctor = async ({
@@ -60,19 +71,26 @@ export const createUserUseCases = () => {
   }) => {
     const existingUser = await findUserByEmail(email);
     if (existingUser) {
-      throw new Error("Имэйл бүртгэгдсэн байна!");
+      throw createError("Имэйл бүртгэгдсэн байна!", 409);
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    return await createMedicalStaff({
+    const hashedPassword = await hashPassword(password);
+
+    const staff = await createMedicalStaff({
       firstname,
       lastname,
       email,
       phoneNumber,
-      position: "Doctor",
       password: hashedPassword,
       specialization,
+      position: "Doctor",
     });
+
+    const payload = { id: staff._id, role: staff.role };
+    const accessToken = generateAccessToken(payload);
+    const refreshToken = generateRefreshToken(payload);
+
+    return { accessToken, refreshToken, staff };
   };
 
   const registerNurse = async ({
@@ -85,19 +103,26 @@ export const createUserUseCases = () => {
   }) => {
     const existingUser = await findUserByEmail(email);
     if (existingUser) {
-      throw new Error("Имэйл бүртгэгдсэн байна!");
+      throw createError("Имэйл бүртгэгдсэн байна!", 409);
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    return await createMedicalStaff({
+    const hashedPassword = await hashPassword(password);
+
+    const staff = await createMedicalStaff({
       firstname,
       lastname,
       email,
       phoneNumber,
-      position: "Nurse",
       password: hashedPassword,
       specialization,
+      position: "Nurse",
     });
+
+    const payload = { id: staff._id, role: staff.role };
+    const accessToken = generateAccessToken(payload);
+    const refreshToken = generateRefreshToken(payload);
+
+    return { accessToken, refreshToken, staff };
   };
 
   const registerPatient = async ({
@@ -118,11 +143,12 @@ export const createUserUseCases = () => {
   }) => {
     const existingUser = await findUserByEmail(email);
     if (existingUser) {
-      throw new Error("Имэйл бүртгэгдсэн байна!");
+      throw createError("Имэйл бүртгэгдсэн байна!", 409);
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    return await createPatient({
+    const hashedPassword = await hashPassword(password);
+
+    const patient = await createPatient({
       firstname,
       lastname,
       email,
@@ -138,6 +164,11 @@ export const createUserUseCases = () => {
       birthOfDate,
       gender,
     });
+
+    const payload = { id: patient._id, role: patient.role };
+    const accessToken = generateAccessToken(payload);
+    const refreshToken = generateRefreshToken(payload);
+    return { accessToken, refreshToken, patient };
   };
 
   return {

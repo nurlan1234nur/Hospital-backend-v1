@@ -1,54 +1,121 @@
-import { createUserUseCases } from "../../application/use_cases/userUseCases.js";
+import {
+  adminSignupSchema,
+  medicalStaffSignupSchema,
+  patientSignupSchema,
+} from "../../utils/validators.js";
+import { toPublicUser } from "../../utils/formatter.js";
+import { createUserUseCases } from "../../application/use_cases/authUseCases.js";
 const { registerPatient, registerAdmin, registerDoctor, registerNurse, login } =
   createUserUseCases();
 
+const sendTokenResponse = (res, refreshToken, payload, message = "") => {
+  return res
+    .cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    })
+    .status(201)
+    .json({ message, ...payload });
+};
+
 export const signUp = async (req, res) => {
   try {
-    const user = await registerPatient(req.body);
-    res.status(201).json({ message: "Хэрэглэгч бүртгэгдлээ!", user });
+    const input = patientSignupSchema.parse(req.body);
+    const { accessToken, refreshToken, patient } = await registerPatient(input);
+    const publicPatient = toPublicUser(patient);
+    return sendTokenResponse(
+      res,
+      refreshToken,
+      { user: publicPatient, accessToken },
+      "Хэрэглэгч бүртгэгдлээ!"
+    );
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    return handleZodOrAppError(res, error);
   }
 };
 
 export const signIn = async (req, res) => {
   try {
-    const { accessToken, refreshToken } = await login(req.body);
-    res.status(200).json({ message: "Амжилттай нэвтэрлээ!", token, role });
-    res
-      .cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      })
-      .status(200)
-      .json({ message: "Нэвтэрлээ!", accessToken });
+    const { accessToken, refreshToken, user } = await login(req.body);
+    // role oos n hamaarch different medeelel yvuulah bol iimerhu oruulj bolno toPublicAdmin ntr gedg ch yumu
+    const publicUser =
+      user?.role === "Admin"
+        ? toPublicUser(user)
+        : user?.role === "Patient"
+        ? toPublicUser(user)
+        : toPublicUser(user);
+
+    return sendTokenResponse(
+      res,
+      refreshToken,
+      { user: publicUser, accessToken },
+      "Амжилттай нэвтэрлээ!"
+    );
   } catch (error) {
-    res.status(401).json({ error: error.message });
+    return handleZodOrAppError(res, error, 401);
   }
 };
+
 export const signUpAdmin = async (req, res) => {
   try {
-    const admin = await registerAdmin(req.body);
-    res.status(201).json({ message: "Админ бүртгэгдлээ!", admin });
+    const input = adminSignupSchema.parse(req.body);
+    const { accessToken, refreshToken, admin } = await registerAdmin(input);
+    const publicAdmin = toPublicUser(admin);
+    return sendTokenResponse(
+      res,
+      refreshToken,
+      { admin: publicAdmin, accessToken },
+      "Админ бүртгэгдлээ!"
+    );
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    return handleZodOrAppError(res, error);
   }
 };
+
 export const signUpDoctor = async (req, res) => {
   try {
-    const staff = await registerDoctor(req.body);
-    res.status(201).json({ message: "Мэдийн ажилтан бүртгэгдлээ!", staff });
+    const input = medicalStaffSignupSchema.parse(req.body);
+    const { accessToken, refreshToken, staff } = await registerDoctor(input);
+    const publicDoctor = toPublicUser(staff);
+    return sendTokenResponse(
+      res,
+      refreshToken,
+      { staff: publicDoctor, accessToken },
+      "Эмч бүртгэгдлээ!"
+    );
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    return handleZodOrAppError(res, error);
   }
 };
+
 export const signUpNurse = async (req, res) => {
   try {
-    const staff = await registerNurse(req.body);
-    res.status(201).json({ message: "Мэдийн ажилтан бүртгэгдлээ!", staff });
+    const input = medicalStaffSignupSchema.parse(req.body);
+    const { accessToken, refreshToken, staff } = await registerNurse(input);
+    const publicNurse = toPublicUser(staff);
+    return sendTokenResponse(
+      res,
+      refreshToken,
+      { staff: publicNurse, accessToken },
+      "Сувилагч бүртгэгдлээ!"
+    );
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    return handleZodOrAppError(res, error);
   }
+};
+
+// Common Error Handler
+const handleZodOrAppError = (res, error, fallbackStatus = 400) => {
+  if (error.name === "ZodError") {
+    const errors = error.errors.map((e) => ({
+      field: e.path[0],
+      message: e.message,
+    }));
+    return res.status(400).json({ errors });
+  }
+  const status = error.statusCode || fallbackStatus;
+  const message = error.message || "Something went wrong";
+  return res.status(status).json({ error: message });
 };
