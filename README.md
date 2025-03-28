@@ -51,3 +51,20 @@ project-root/
 
 1. Folder structure болон `auth.controller.js` гэх мэт stylistic choice-ыг сольж болно.
 2. helpers, validators нэмье гэж бодож байгаа (дараагаар). Мөн auth middleware бичнэ.
+
+##5 testUsers:
+Patient
+test6@gmail.com
+Test1234@
+
+Doctor
+suvdaa@gmail.com
+Test@1234
+
+Nurse
+sumya@gmail.com
+Test@1234
+
+Admin
+admin@ex.com
+Password123%

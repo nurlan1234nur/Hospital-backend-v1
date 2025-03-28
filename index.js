@@ -7,6 +7,8 @@ import bodyParser from "body-parser";
 import AuthRouter from "./interfaces/routes/auth.routes.js";
 import PatientRouter from "./interfaces/routes/patient.routes.js";
 import HealthRouter from "./interfaces/routes/health.routes.js";
+import medicalStaffRouter from "./interfaces/routes/medicalstaff.routes.js";
+
 
 const app = express();
 app.use(express.json());
@@ -28,5 +30,7 @@ mongoose
 app.use("/api/auth", AuthRouter);
 app.use("/api/patient", PatientRouter);
 app.use("/api", HealthRouter);
+app.use("/api/medicalstaff", medicalStaffRouter);
+
 console.log("working");
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

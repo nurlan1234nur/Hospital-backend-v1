@@ -5,6 +5,7 @@ export const toPublicUser = (doc) => {
     lastname: doc.lastname,
     email: doc.email,
     phoneNumber: doc.phoneNumber,
+    role:doc.role, //tur
   };
 };
 
