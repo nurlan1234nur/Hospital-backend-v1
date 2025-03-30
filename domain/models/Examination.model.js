@@ -14,6 +14,7 @@ const ExaminationSchema = new Schema(
     isVioleted: { type: Boolean },
     sickDays: { type: Number },
     // Relationship: an Examination is performed by 1 Doctor and for 1 Patient
+    vital: { type: Schema.Types.ObjectId, ref: "Vital" },
     medicalStaff: { type: Schema.Types.ObjectId, ref: "MedicalStaff" },
     patient: { type: Schema.Types.ObjectId, ref: 'Patient' },
     
