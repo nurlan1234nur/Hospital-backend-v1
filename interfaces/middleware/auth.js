@@ -14,9 +14,23 @@ export const authenticateJWT = (req, res, next) => {
 };
 
 export const authorizeRole = (roles) => (req, res, next) => {
-  console.log(req.user.role);
+  // First check if req.user exists
+  if (!req.user) {
+    return res.status(401).json({ error: "Authentication required" });
+  }
+  
+  // Then check if req.user.role exists
+  if (!req.user.role) {
+    console.log("User object:", req.user); // Add this for debugging
+    return res.status(403).json({ error: "Role information missing" });
+  }
+  
+  console.log("User role:", req.user.role);
+  
+  // Finally check if the role is allowed
   if (!roles.includes(req.user.role)) {
     return res.status(403).json({ error: "Insufficient permission" });
   }
+  
   next();
 };

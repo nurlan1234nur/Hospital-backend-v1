@@ -11,6 +11,7 @@ import { createChronicDiseaseUseCases } from "../../application/use_cases/patien
 import { chronicDiseaseSchema, chronicDiseaseUpdateSchema } from "../../utils/validators.js";
 import { findChronicDiseaseById } from "../../infrastructure/repositories/patientRepository.js";
 
+
 const {
   addAllergy,
   getAllergy,
@@ -65,6 +66,8 @@ export const getOwnExaminations = async (req, res) => {
     return res.status(500).json({ error: "Үзлэгийн түүх авахад алдаа гарлаа!" });
   }
 };
+
+
 //allergy
 export const createAllergy = async (req, res) => {
   try {

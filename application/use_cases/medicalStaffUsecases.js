@@ -1,15 +1,28 @@
 import {
-    createExamination,
-    findExaminationById,
-    updateExaminationById,
-    deleteExaminationById,
-    listPatientExaminations
+  createExamination,
+  findExaminationById,
+  updateExaminationById,
+  deleteExaminationById,
+  listPatientExaminations,
+  listMedicalStaffExaminations,
+  createQuestionnaire,
+  findQuestionnaireById,
+  updateQuestionnaireById,
+  deleteQuestionnaireById,
+  listPatientQuestionnaires,
+  listExaminationQuestionnaires,
+  listMedicalStaffQuestionnaires,
+  listAllDiseaseCodes,
+  findDiseaseCodeById,
+  findDiseaseCodeByValue,
   } from "../../infrastructure/repositories/medicalStaffRepository.js";
   import { createError } from "../../utils/error.js";
+
+  //UZLEG 
   
   export const createExaminationUseCases = () => {
     const addExamination = async (examinationData) => {
-      // Generate unique exam_id (you may have a different strategy)
+  
       const examId = Date.now();
       
       const examination = await createExamination({
@@ -35,8 +48,8 @@ import {
         throw createError("Үзлэгийн мэдээлэл олдсонгүй!", 404);
       }
       
-      // Ensure staff can only update their own examinations
-      if (updateData.staffId && examination.medicalStaff.toString() !== updateData.staffId) {
+      // Check if staff can update this examination 
+      if (updateData.staffId && examination.medicalStaff._id.toString() !== updateData.staffId) {
         throw createError("Зөвхөн өөрийн бүртгэсэн үзлэгийг засах боломжтой!", 403);
       }
       
@@ -56,7 +69,7 @@ import {
       }
       
       // Ensure staff can only delete their own examinations
-      if (examination.medicalStaff.toString() !== staffId) {
+      if (examination.medicalStaff.id.toString() !== staffId) {
         throw createError("Зөвхөн өөрийн бүртгэсэн үзлэгийг устгах боломжтой!", 403);
       }
       
@@ -68,12 +81,135 @@ import {
       const examinations = await listPatientExaminations(patientId, filters);
       return examinations;
     };
+    const getMedicalStaffExaminations = async (staffId, filters = {}) => {
+      const examinations = await listMedicalStaffExaminations(staffId, filters);
+      return examinations;
+    };
   
     return {
       addExamination,
       getExamination,
       updateExamination,
       removeExamination,
-      getPatientExaminations
+      getPatientExaminations,
+      getMedicalStaffExaminations 
     };
   };
+
+  //QUESTION
+  
+  export const createQuestionnaireUseCases = () => {
+    const addQuestionnaire = async (questionData) => {
+      // Generate unique question_id
+      const questionId = Date.now();
+      
+      const questionnaire = await createQuestionnaire({
+        ...questionData,
+        question_id: questionId
+      });
+      
+      return questionnaire;
+    };
+  
+    const getQuestionnaire = async (id) => {
+      const questionnaire = await findQuestionnaireById(id);
+      if (!questionnaire) {
+        throw createError("Асуумжийн мэдээлэл олдсонгүй!", 404);
+      }
+      return questionnaire;
+    };
+  
+    const updateQuestionnaire = async (id, updateData) => {
+      const questionnaire = await findQuestionnaireById(id);
+      if (!questionnaire) {
+        throw createError("Асуумжийн мэдээлэл олдсонгүй!", 404);
+      }
+      
+      // Check if staff can update this questionnaire
+      if (updateData.staffId && questionnaire.medicalStaff.id.toString() !== updateData.staffId) {
+        throw createError("Зөвхөн өөрийн үүсгэсэн асуумжийг засах боломжтой!", 403);
+      }
+      
+      // Remove staffId from update data as it's not a field in the model
+      if (updateData.staffId) {
+        delete updateData.staffId;
+      }
+      
+      const updatedQuestionnaire = await updateQuestionnaireById(id, updateData);
+      return updatedQuestionnaire;
+    };
+  
+    const removeQuestionnaire = async (id, staffId) => {
+      const questionnaire = await findQuestionnaireById(id);
+      if (!questionnaire) {
+        throw createError("Асуумжийн мэдээлэл олдсонгүй!", 404);
+      }
+      
+      // Check if staff can delete this questionnaire
+      if (staffId && questionnaire.medicalStaff.id.toString() !== staffId) {
+        throw createError("Зөвхөн өөрийн үүсгэсэн асуумжийг устгах боломжтой!", 403);
+      }
+      
+      await deleteQuestionnaireById(id);
+      return { success: true, message: "Асуумжийн мэдээлэл амжилттай устгагдлаа!" };
+    };
+  
+    const getPatientQuestionnaires = async (patientId) => {
+      const questionnaires = await listPatientQuestionnaires(patientId);
+      return questionnaires;
+    };
+  
+    const getExaminationQuestionnaires = async (examinationId) => {
+      const questionnaires = await listExaminationQuestionnaires(examinationId);
+      return questionnaires;
+    };
+  
+    const getMedicalStaffQuestionnaires = async (staffId) => {
+      const questionnaires = await listMedicalStaffQuestionnaires(staffId);
+      return questionnaires;
+    };
+  
+    return {
+      addQuestionnaire,
+      getQuestionnaire,
+      updateQuestionnaire,
+      removeQuestionnaire,
+      getPatientQuestionnaires,
+      getExaminationQuestionnaires,
+      getMedicalStaffQuestionnaires
+    };
+  };
+  //DISEASES
+
+  export const createDiseaseCodeUseCases = () => {
+    const listDiseaseCodes = async (filters = {}) => {
+      const diseaseCodes = await listAllDiseaseCodes(filters);
+      return diseaseCodes;
+    };
+  
+    const getDiseaseCodeById = async (id) => {
+      const diseaseCode = await findDiseaseCodeById(id);
+      if (!diseaseCode) {
+        throw createError("Өвчний код олдсонгүй!", 404);
+      }
+      return diseaseCode;
+    };
+  
+    const getDiseaseCodeByValue = async (value) => {
+      const diseaseCode = await findDiseaseCodeByValue(value);
+      if (!diseaseCode) {
+        throw createError("Өвчний код олдсонгүй!", 404);
+      }
+      return diseaseCode;
+    };
+  
+    
+  
+    return {
+      listDiseaseCodes,
+      getDiseaseCodeById,
+      getDiseaseCodeByValue,
+    };
+  };
+
+

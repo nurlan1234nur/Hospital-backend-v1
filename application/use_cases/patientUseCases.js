@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import { listAllPatients } from "../../infrastructure/repositories/patientRepository.js";
 import { createError } from "../../utils/error.js";
+import { listPatientQuestionnaires } from "../../infrastructure/repositories/medicalStaffRepository.js";
 import {
   createAllergy,
   findAllergyById,
@@ -26,6 +27,7 @@ export const createPatientUseCases = () => {
     listPatients,
   };
 };
+
 //ALLERGY
 export const createAllergyUseCases = () => {
   const addAllergy = async (allergyData) => {

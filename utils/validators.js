@@ -136,3 +136,23 @@ export const chronicDiseaseUpdateSchema = z.object({
   description: z.string().optional(),
   diagnosisDate: z.date().optional()
 });
+
+//QUESTION
+
+export const questionnaireSchema = z.object({
+  question: z.string().min(1, "Асуултын агуулгыг оруулна уу"),
+  answer:  z.string().min(1, "Асуултын хариултыг оруулна уу"),
+  patient: z.string().min(1, "Өвчтөний ID оруулна уу"),
+  examination: z.string().optional(),
+  medicalStaff: z.string().min(1, "Эмч/Сувилагчийн ID оруулна уу")
+});
+
+export const questionnaireUpdateSchema = z.object({
+  staffId: z.string().optional(), // This is for verification, not for storing
+  question: z.string().min(1, "Асуултын агуулгыг оруулна уу").optional(),
+  answer:z.string().min(1, "Асуултын хариултыг оруулна уу")
+});
+
+export const patientQuestionnaireResponseSchema = z.object({
+  answer: z.array(z.string()).min(1, "Хариултыг оруулна уу")
+});

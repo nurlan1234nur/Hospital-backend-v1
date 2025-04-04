@@ -10,9 +10,7 @@ import {
   getMyAllergies,
   updateMyAllergyById,
   deleteMyAllergyById,
-  createMyAllergy
-} from "../controller/patient.controller.js";
-import {
+  createMyAllergy,
   createChronicDisease,
   getChronicDiseaseById,
   updateChronicDiseaseById,
@@ -21,8 +19,10 @@ import {
   getMyChronicDiseases,
   createMyChronicDisease,
   updateMyChronicDiseaseById,
-  deleteMyChronicDiseaseById
+  deleteMyChronicDiseaseById,
 } from "../controller/patient.controller.js";
+ 
+
 
 const router = express.Router();
 
@@ -153,6 +153,9 @@ router.delete(
   authorizeRole(["Patient"]),
   deleteMyChronicDiseaseById
 );
+
+
+
 
 
 
