@@ -210,3 +210,16 @@ export const dateRangeSchema = z.object({
   startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Огноо YYYY-MM-DD форматтай байх ёстой."),
   endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Огноо YYYY-MM-DD форматтай байх ёстой.")
 });
+
+export const diagnosisSchema = z.object({
+  diagnosisCode: z.string().min(1, "Өвчний кодыг оруулна уу"),
+  patient: z.string().min(1, "Өвчтөний ID оруулна уу"),
+  examination: z.string().optional(),
+  medicalStaff: z.string().min(1, "Эмч/Сувилагчийн ID оруулна уу")
+});
+
+export const diagnosisUpdateSchema = z.object({
+  staffId: z.string().optional(), // Used for verification, not for storing
+  diagnosisCode: z.string().optional(),
+  examination: z.string().optional()
+});

@@ -11,7 +11,7 @@ import {
   updateMyChronicDiseaseById,
   deleteMyChronicDiseaseById,
 } from "../controller/patient.controller.js";
-import { getMyLatestVitalSigns, getMyVitalSigns, getPatientVitalSignsByDateRange, getVitalSignsById } from "../controller/medicalstaff.controller.js";
+import { getDiagnosisById, getExaminationDiagnosisList, getMyDiagnoses, getMyLatestVitalSigns, getMyVitalSigns, getPatientVitalSignsByDateRange, getVitalSignsById } from "../controller/medicalstaff.controller.js";
  
 
 
@@ -121,6 +121,30 @@ router.get(
 
 
 
+
+//DIAGNOSIS
+router.get(
+  "/my-diagnoses",
+  authenticateJWT,
+  authorizeRole(["Patient"]),
+  getMyDiagnoses 
+);
+
+// Get a specific diagnosis by ID (patient can only view their own diagnoses)
+router.get(
+  "/diagnosis/:id",
+  authenticateJWT,
+  authorizeRole(["Patient"]),
+  getDiagnosisById
+);
+
+// Get all diagnoses for a specific examination (patient can only view their own examinations)
+router.get(
+  "/examination/:examinationId/diagnoses",
+  authenticateJWT,
+  authorizeRole(["Patient"]),
+  getExaminationDiagnosisList
+);
 
 
 

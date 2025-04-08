@@ -23,7 +23,14 @@ import {
   getPatientVitalSignsList,
   getPatientLatestVitalSigns,
   getPatientVitalSignsByDateRange,
-  getMyVitalSignsByStaff
+  getMyVitalSignsByStaff,
+  createDiagnosis,
+  getDiagnosisById,
+  updateDiagnosisById,
+  deleteDiagnosisById,
+  getPatientDiagnosisList,
+  getExaminationDiagnosisList,
+  getMyDiagnoses
 } from "../controller/medicalstaff.controller.js";
 import { authenticateJWT, authorizeRole } from "../middleware/auth.js";
 import { createAllergy, createChronicDisease, deleteAllergyById, deleteChronicDiseaseById, getAllergyById, getChronicDiseaseById, getPatientAllergyList, getPatientChronicDiseaseList, updateAllergyById, updateChronicDiseaseById } from "../controller/patient.controller.js";
@@ -262,5 +269,58 @@ router.get(
   "/vitalsigns/my/recorded",
   authorizeRole(["MedicalStaff"]),
   getMyVitalSignsByStaff
+);
+
+
+
+
+
+//DIAGNOSIS
+router.post(
+  "/diagnosis",
+  authorizeRole(["MedicalStaff"]),
+  createDiagnosis
+);
+
+// Get a specific diagnosis by ID (medical staff and the diagnosed patient)
+router.get(
+  "/diagnosis/:id",
+  authorizeRole(["MedicalStaff", "Admin"]),
+  getDiagnosisById
+);
+
+// Update an existing diagnosis (medical staff only)
+router.put(
+  "/diagnosis/:id",
+  authorizeRole(["MedicalStaff"]),
+  updateDiagnosisById
+);
+
+// Delete a diagnosis (medical staff only)
+router.delete(
+  "/diagnosis/:id",
+  authorizeRole(["MedicalStaff"]),
+  deleteDiagnosisById
+);
+
+// Get all diagnoses for a specific patient (for medical staff and the patient themselves)
+router.get(
+  "/patient/diagnosis/:patientId",
+  authorizeRole(["MedicalStaff", "Admin"]),
+  getPatientDiagnosisList
+);
+
+// Get all diagnoses for a specific examination (for medical staff and the patient)
+router.get(
+  "/examination/diagnosis/:examinationId",
+  authorizeRole(["MedicalStaff", "Admin"]),
+  getExaminationDiagnosisList
+);
+
+// Get all my diagnoses (for patients to see their own diagnoses or staff to see diagnoses they created)
+router.get(
+  "/my-diagnoses",
+  authorizeRole(["MedicalStaff"]),
+  getMyDiagnoses
 );
 export default router;

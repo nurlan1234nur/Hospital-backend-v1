@@ -2,10 +2,7 @@ import { Schema, model } from 'mongoose';
 
 const DiagnosisSchema = new Schema(
   {
-    diagnosis_id: { type: Number, required: true, unique: true },
-    diagnosisCode: { type: String },
-    diagnosisName: {type:String},
-    diagnosisDesc: { type: String },
+    diagnosisCode: { type: Schema.Types.ObjectId, ref: "DiseaseCode"},
     patient: { type: Schema.Types.ObjectId, ref: 'Patient' },
     examination:   { type: Schema.Types.ObjectId, ref: "Examination" },
     medicalStaff: { type: Schema.Types.ObjectId, ref: "MedicalStaff" },
