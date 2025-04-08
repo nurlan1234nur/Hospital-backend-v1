@@ -2,29 +2,21 @@ import { getOwnExaminations, listAllPatients } from "../controller/patient.contr
 import express from "express";
 import { authenticateJWT, authorizeRole } from "../middleware/auth.js";
 import {
-  createAllergy,
-  getAllergyById,
-  updateAllergyById,
-  deleteAllergyById,
-  getPatientAllergyList,
   getMyAllergies,
   updateMyAllergyById,
   deleteMyAllergyById,
   createMyAllergy,
-  createChronicDisease,
-  getChronicDiseaseById,
-  updateChronicDiseaseById,
-  deleteChronicDiseaseById,
-  getPatientChronicDiseaseList,
   getMyChronicDiseases,
   createMyChronicDisease,
   updateMyChronicDiseaseById,
   deleteMyChronicDiseaseById,
 } from "../controller/patient.controller.js";
+import { getMyLatestVitalSigns, getMyVitalSigns, getPatientVitalSignsByDateRange, getVitalSignsById } from "../controller/medicalstaff.controller.js";
  
 
 
 const router = express.Router();
+router.use(authenticateJWT);
 
 router.get(
   "/view",
@@ -41,36 +33,6 @@ router.get(
 );
 
 //ALLERGY
-router.post(
-  "/allergy",
-  authorizeRole(["MedicalStaff", "Admin"]),
-  createAllergy
-);
-
-router.get(
-  "/allergy/:id",
-  authorizeRole(["MedicalStaff", "Admin", "Patient"]),
-  getAllergyById
-);
-
-router.put(
-  "/allergy/:id",
-  authorizeRole(["MedicalStaff", "Admin"]),
-  updateAllergyById
-);
-
-router.delete(
-  "/allergy/:id",
-  authorizeRole(["MedicalStaff", "Admin"]),
-  deleteAllergyById
-);
-
-// Get all allergies for a specific patient (medical staff and admin)
-router.get(
-  "/patient/allergy/:patientId",
-  authorizeRole(["MedicalStaff", "Admin"]),
-  getPatientAllergyList
-);
 
 // Patient-specific routes for managing their own allergies
 router.get(
@@ -98,38 +60,7 @@ router.delete(
 );
 
 //CHRONIC DISEASE
-router.post(
-  "/chrodis",
-  authorizeRole(["MedicalStaff", "Admin"]),
-  createChronicDisease
-);
 
-router.get(
-  "/chrodis/:id",
-  authorizeRole(["MedicalStaff", "Admin", "Patient"]),
-  getChronicDiseaseById
-);
-
-router.put(
-  "/chrodis/:id",
-  authorizeRole(["MedicalStaff", "Admin"]),
-  updateChronicDiseaseById
-);
-
-router.delete(
-  "/chrodis/:id",
-  authorizeRole(["MedicalStaff", "Admin"]),
-  deleteChronicDiseaseById
-);
-
-// Get all chronic diseases for a specific patient (medical staff and admin)
-router.get(
-  "/patient/chrodis/:patientId",
-  authorizeRole(["MedicalStaff", "Admin"]),
-  getPatientChronicDiseaseList
-);
-
-// Patient-specific routes for managing their own chronic diseases
 router.get(
   "/my/diseases",
   authorizeRole(["Patient"]),
@@ -152,6 +83,39 @@ router.delete(
   "/my/diseases/:id",
   authorizeRole(["Patient"]),
   deleteMyChronicDiseaseById
+);
+
+
+
+
+//VITAL SIGNS
+router.get(
+  "/vitalsigns/:id",
+  authorizeRole(["Patient"]),
+  getVitalSignsById
+);
+
+router.get(
+  "/vitalsigns/my/recorded",
+  authorizeRole(["Patient"]),
+  getMyVitalSigns
+);
+
+router.get(
+  "/vitalsigns/my/latest",
+  authorizeRole(["Patient"]),
+  getMyLatestVitalSigns
+  
+);
+
+router.get(
+  "/vitalsigns/my/daterange",
+  authorizeRole(["Patient"]),
+  (req, res, next) => {
+    req.params.patientId = req.user.id;
+    next();
+  },
+  getPatientVitalSignsByDateRange
 );
 
 

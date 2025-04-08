@@ -1,6 +1,6 @@
 import Patient from "../../domain/models/Patient.model.js";
-import Allergies from "../../domain/models/Patient.model.js";
-import ChronicDiseases from "../../domain/models/Patient.model.js";
+import Allergies from "../../domain/models/Allergy.model.js";
+import ChronicDiseases from "../../domain/models/ChronicDiseases.model.js";
 
 export const listAllPatients = async (filters = {}) => {
   return await Patient.find(filters);

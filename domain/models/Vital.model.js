@@ -14,7 +14,6 @@ const VitalSignsSchema = new Schema(
     weight: {type:Number},
     // Relationship: a VitalSigns entry belongs to one Patient
     patient: { type: Schema.Types.ObjectId, ref: 'Patient' },
-    examination:   { type: Schema.Types.ObjectId, ref: "Examination" },
     medicalStaff: { type: Schema.Types.ObjectId, ref: "MedicalStaff" },
   },
   { timestamps: true }
