@@ -1,12 +1,14 @@
 import mongoose from "mongoose";
+import QuestionnaireModel from "./Questionnaire.model.js";
 const { Schema } = mongoose;
 
-const questionnaireSchema = new Schema({
-  question:     { type: String },
-  answer: { type: String },
-  patient:   { type: Schema.Types.ObjectId, ref: "Patient" },
-  examination:   { type: Schema.Types.ObjectId, ref: "Examination" },
-  medicalStaff: { type: Schema.Types.ObjectId, ref: "MedicalStaff" },
-});
+const questionSchema = new Schema(
+  {
+    question: { type: String },
+    answer: { type: String },
+    questionnaire_id: { type: Schema.Types.ObjectId, ref: "Questionnaire" },
+  },
+  { timestamps: true }
+);
 
-export default mongoose.model("Question", questionnaireSchema);
+export default mongoose.model("Question", questionSchema);
