@@ -2,7 +2,6 @@ import { Schema, model } from 'mongoose';
 
 const AllergiesSchema = new Schema(
   {
-    allergies_id: { type: Number, required: true, unique: true },
     allergy_name: { type: String },
     severity: { type: String,enum: ["mild", "moderate", "severe"] },
     reaction: { type: String },

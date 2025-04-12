@@ -11,7 +11,7 @@ import {
   updateMyChronicDiseaseById,
   deleteMyChronicDiseaseById,
 } from "../controller/patient.controller.js";
-import { getDiagnosisById, getExaminationDiagnosisList, getMyDiagnoses, getMyLatestVitalSigns, getMyVitalSigns, getPatientVitalSignsByDateRange, getVitalSignsById } from "../controller/medicalstaff.controller.js";
+import { getDiagnosisById, getExaminationDiagnosisList, getMyDiagnoses, getMyLatestVitalSigns, getMyPrescribedGuides, getMyPrescribedMeds, getMyPrescriptions, getMyVitalSigns, getPatientVitalSignsByDateRange, getPrescribedGuideById, getPrescribedMedById, getPrescriptionById, getPrescriptionGuidesList, getPrescriptionMedsList, getVitalSignsById } from "../controller/medicalstaff.controller.js";
  
 
 
@@ -145,6 +145,67 @@ router.get(
   authorizeRole(["Patient"]),
   getExaminationDiagnosisList
 );
+
+
+//===================== PATIENT PRESCRIPTIONS =====================
+// Get all prescriptions for the logged-in patient
+router.get(
+  "/my-prescriptions",
+  authorizeRole(["Patient"]),
+  getMyPrescriptions
+);
+
+// Get a specific prescription by ID
+router.get(
+  "/prescription/:id",
+  authorizeRole(["Patient"]),
+  getPrescriptionById
+);
+
+//===================== PATIENT MEDICATIONS =====================
+// Get all medications for the logged-in patient
+router.get(
+  "/my-medications",
+  authorizeRole(["Patient"]),
+  getMyPrescribedMeds
+);
+
+// Get a specific medication by ID
+router.get(
+  "/medication/:id",
+  authorizeRole(["Patient"]),
+  getPrescribedMedById
+);
+
+// Get all medications for a specific prescription
+router.get(
+  "/prescription/:prescriptionId/medications",
+  authorizeRole(["Patient"]),
+  getPrescriptionMedsList
+);
+
+//===================== PATIENT GUIDES =====================
+// Get all guides for the logged-in patient
+router.get(
+  "/my-guides",
+  authorizeRole(["Patient"]),
+  getMyPrescribedGuides
+);
+
+// Get a specific guide by ID
+router.get(
+  "/guide/:id",
+  authorizeRole(["Patient"]),
+  getPrescribedGuideById
+);
+
+// Get all guides for a specific prescription
+router.get(
+  "/prescription/:prescriptionId/guides",
+  authorizeRole(["Patient"]),
+  getPrescriptionGuidesList
+);
+
 
 
 

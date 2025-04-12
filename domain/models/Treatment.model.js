@@ -2,7 +2,6 @@ import { Schema, model } from 'mongoose';
 
 const TreatmentSchema = new Schema(
   {
-    treatment_id: { type: Number, required: true, unique: true },
     date: {type:Date},
     treatmentType: {type:String, enum:["Uvch","Bumba","Sharlaga","Dusal","Taria"]},
     diagnosisType: { type: String, enum:["in", "out"] },

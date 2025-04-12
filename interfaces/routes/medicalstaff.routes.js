@@ -30,7 +30,25 @@ import {
   deleteDiagnosisById,
   getPatientDiagnosisList,
   getExaminationDiagnosisList,
-  getMyDiagnoses
+  getMyDiagnoses,
+  createPrescription,
+  getPrescriptionById,
+  updatePrescriptionById,
+  deletePrescriptionById,
+  getPatientPrescriptionList,
+  getMyPrescriptions,
+  createPrescribedMed,
+  getPrescribedMedById,
+  updatePrescribedMedById,
+  deletePrescribedMedById,
+  getPrescriptionMedsList,
+  getPatientPrescribedMedsList,
+  createPrescribedGuide,
+  getPrescribedGuideById,
+  updatePrescribedGuideById,
+  deletePrescribedGuideById,
+  getPrescriptionGuidesList,
+  getPatientPrescribedGuidesList
 } from "../controller/medicalstaff.controller.js";
 import { authenticateJWT, authorizeRole } from "../middleware/auth.js";
 import { createAllergy, createChronicDisease, deleteAllergyById, deleteChronicDiseaseById, getAllergyById, getChronicDiseaseById, getPatientAllergyList, getPatientChronicDiseaseList, updateAllergyById, updateChronicDiseaseById } from "../controller/patient.controller.js";
@@ -43,7 +61,7 @@ router.use(authenticateJWT);
 //routes
 
 
-//EXAMINATIONS
+//================EXAMINATIONS======================
 router.post(
   "/exam/",
   authorizeRole(["MedicalStaff"]),
@@ -83,7 +101,7 @@ router.get(
 
 
 
-//QUESTION
+//===============QUESTION======================
 
 router.post(
   "/question/",
@@ -132,7 +150,7 @@ router.get(
 
 
 
-//DISEASES
+//=====================DISEASES=========================
 router.get(
   "/icd10", 
   authorizeRole(["MedicalStaff"]),
@@ -151,7 +169,7 @@ router.get(
   
 
 
-//ALLERGY
+//=====================ALLERGY==========================
 router.post(
   "/allergy",
   authorizeRole(["MedicalStaff", "Admin"]),
@@ -186,7 +204,7 @@ router.get(
 
 
 
-//CHRONIC DISEASE
+//=================CHRONIC DISEASE=====================
 router.post(
   "/chrodis",
   authorizeRole(["MedicalStaff", "Admin"]),
@@ -222,7 +240,7 @@ router.get(
 
 
 
-//VITAL SIGNS
+//=====================VITAL SIGNS======================
 router.post(
   "/vitalsigns",
   authorizeRole(["MedicalStaff"]),
@@ -275,7 +293,7 @@ router.get(
 
 
 
-//DIAGNOSIS
+//=====================DIAGNOSIS========================
 router.post(
   "/diagnosis",
   authorizeRole(["MedicalStaff"]),
@@ -322,5 +340,143 @@ router.get(
   "/my-diagnoses",
   authorizeRole(["MedicalStaff"]),
   getMyDiagnoses
+);
+
+
+
+
+//===================== PRESCRIPTIONS =====================
+// Create a new prescription (medical staff only)
+router.post(
+  "/prescription",
+  authorizeRole(["MedicalStaff"]),
+  createPrescription 
+);
+
+// Get prescription by ID (medical staff only)
+router.get(
+  "/prescription/:id",
+  authorizeRole(["MedicalStaff", "Admin"]),
+  getPrescriptionById
+);
+
+// Update prescription (medical staff only)
+router.put(
+  "/prescription/:id",
+  authorizeRole(["MedicalStaff"]),
+  updatePrescriptionById
+);
+
+// Delete prescription (medical staff only)
+router.delete(
+  "/prescription/:id",
+  authorizeRole(["MedicalStaff"]),
+  deletePrescriptionById
+);
+
+// Get all prescriptions for a specific patient
+router.get(
+  "/patient/:patientId/prescriptions",
+  authorizeRole(["MedicalStaff", "Admin"]),
+  getPatientPrescriptionList
+);
+
+// Get all prescriptions created by the logged-in medical staff
+router.get(
+  "/my-prescriptions",
+  authorizeRole(["MedicalStaff"]),
+  getMyPrescriptions
+);
+
+
+
+
+//===================== PRESCRIBED MEDICATIONS =====================
+// Create a new prescribed med (medical staff only)
+router.post(
+  "/prescription/med",
+  authorizeRole(["MedicalStaff"]),
+  createPrescribedMed
+);
+
+// Get prescribed med by ID (medical staff only)
+router.get(
+  "/prescription/med/:id",
+  authorizeRole(["MedicalStaff", "Admin"]),
+  getPrescribedMedById
+);
+
+// Update prescribed med (medical staff only)
+router.put(
+  "/prescription/med/:id",
+  authorizeRole(["MedicalStaff"]),
+  updatePrescribedMedById
+);
+
+// Delete prescribed med (medical staff only)
+router.delete(
+  "/prescription/med/:id",
+  authorizeRole(["MedicalStaff"]),
+  deletePrescribedMedById
+);
+
+// Get all prescribed meds for a specific prescription
+router.get(
+  "/prescription/:prescriptionId/meds",
+  authorizeRole(["MedicalStaff", "Admin"]),
+  getPrescriptionMedsList
+);
+
+// Get all prescribed meds for a specific patient
+router.get(
+  "/patient/:patientId/meds",
+  authorizeRole(["MedicalStaff", "Admin"]),
+  getPatientPrescribedMedsList
+);
+
+
+
+
+//===================== PRESCRIBED GUIDES =====================
+// Create a new prescribed guide (medical staff only)
+router.post(
+  "/prescription/guide",
+  authorizeRole(["MedicalStaff"]),
+  createPrescribedGuide
+);
+
+// Get prescribed guide by ID (medical staff only)
+router.get(
+  "/prescription/guide/:id",
+  authorizeRole(["MedicalStaff", "Admin"]),
+  getPrescribedGuideById
+);
+
+// Update prescribed guide (medical staff only)
+router.put(
+  "/prescription/guide/:id",
+  authorizeRole(["MedicalStaff"]),
+  updatePrescribedGuideById
+);
+
+// Delete prescribed guide (medical staff only)
+router.delete(
+  "/prescription/guide/:id",
+  authorizeRole(["MedicalStaff"]),
+  deletePrescribedGuideById
+);
+
+// Get all prescribed guides for a specific prescription
+router.get(
+  "/prescription/:prescriptionId/guides",
+  authorizeRole(["MedicalStaff", "Admin"]),
+  getPrescriptionGuidesList
+);
+
+// Get all prescribed guides for a specific patient
+router.get(
+  "/patient/:patientId/guides",
+  authorizeRole(["MedicalStaff", "Admin"]),
+  getPatientPrescribedGuidesList
 );
 export default router;

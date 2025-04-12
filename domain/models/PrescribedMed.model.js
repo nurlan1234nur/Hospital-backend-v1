@@ -1,14 +1,14 @@
 import mongoose from "mongoose";
 const { Schema } = mongoose;
 
-const  PrescribedMed= new Schema({
-  prescribedMed_id: { type: Number, required: true, unique: true },
-  name:          { type: String },
-  description:   { type: String },
-  dose:{type:String},
-  frequency: { type:String },
-  patient:       { type: Schema.Types.ObjectId, ref: "Patient" },
-  medicalStaff: { type: Schema.Types.ObjectId, ref: "MedicalStaff" },
-});
+const PrescribedMedSchema = new Schema({
+  name: { type: String, required: true },
+  description: { type: String },
+  dose: { type: String, required: true },
+  frequency: { type: String, required: true },
+  patient: { type: Schema.Types.ObjectId, ref: "Patient", required: true },
+  medicalStaff: { type: Schema.Types.ObjectId, ref: "MedicalStaff", required: true },
+  prescription: { type: Schema.Types.ObjectId, ref: "Prescription", required: true }
+}, { timestamps: true });
 
 export default mongoose.model("PrescribedMed", PrescribedMedSchema);

@@ -2,7 +2,6 @@ import { Schema, model } from 'mongoose';
 
 const ExaminationSchema = new Schema(
   {
-    exam_id: { type: Number, required: true, unique: true },
     exam_date: { type: Date },
     doctors_examination: { type: String, enum: ["Initial", "Follow-up","Preventive","Active Monitoring", "Home Visit","House Call"] },
     exam_type: { type: String },

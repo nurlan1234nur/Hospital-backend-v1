@@ -2,7 +2,6 @@
 import { Schema } from "mongoose";
 
 const medicalTestSchema = new Schema({
-  test_id: { type: Number, required: true, unique: true },
   testType:{type: String, enum:["blood", "urine"]},
   dateOfTest: {type:Date},
   Result:{type:String},

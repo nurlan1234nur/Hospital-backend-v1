@@ -2,7 +2,6 @@ import { Schema, model } from 'mongoose';
 
 const MedicalHistorySchema = new Schema(
   {
-    medical_history_id: { type: Number, required: true, unique: true },
     historyDate: {type:Date},
     diagnosis: {type: Schema.Types.ObjectId, ref: 'Diagnosis'},
     treatment: {type: Schema.Types.ObjectId, ref:'Treatment'},

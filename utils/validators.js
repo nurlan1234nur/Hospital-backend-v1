@@ -223,3 +223,52 @@ export const diagnosisUpdateSchema = z.object({
   diagnosisCode: z.string().optional(),
   examination: z.string().optional()
 });
+
+
+
+export const prescriptionSchema = z.object({
+  date: z.date().optional(),
+  prescribedBy: z.string().min(1, "Эмч/Сувилагчийн ID оруулна уу"),
+  patient: z.string().min(1, "Өвчтөний ID оруулна уу")
+});
+
+export const prescriptionUpdateSchema = z.object({
+  staffId: z.string().optional(), // Used for verification, not for storing
+  date: z.date().optional()
+});
+
+export const prescribedMedSchema = z.object({
+  name: z.string().min(1, "Эмийн нэр оруулна уу"),
+  description: z.string().optional(),
+  dose: z.string().min(1, "Эмийн тун оруулна уу"),
+  frequency: z.string().min(1, "Хэрэглэх давтамж оруулна уу"),
+  patient: z.string().min(1, "Өвчтөний ID оруулна уу"),
+  medicalStaff: z.string().min(1, "Эмч/Сувилагчийн ID оруулна уу"),
+  prescription: z.string().min(1, "Жорын ID оруулна уу")
+});
+
+export const prescribedMedUpdateSchema = z.object({
+  staffId: z.string().optional(), // Used for verification, not for storing
+  name: z.string().min(1, "Эмийн нэр оруулна уу").optional(),
+  description: z.string().optional(),
+  dose: z.string().min(1, "Эмийн тун оруулна уу").optional(),
+  frequency: z.string().min(1, "Хэрэглэх давтамж оруулна уу").optional()
+});
+
+export const prescribedGuideSchema = z.object({
+  name: z.string().min(1, "Зөвлөмжийн нэр оруулна уу"),
+  description: z.string().min(1, "Зөвлөмжийн тайлбар оруулна уу"),
+  dose: z.string().optional(),
+  frequency: z.string().optional(),
+  patient: z.string().min(1, "Өвчтөний ID оруулна уу"),
+  medicalStaff: z.string().min(1, "Эмч/Сувилагчийн ID оруулна уу"),
+  prescription: z.string().min(1, "Жорын ID оруулна уу")
+});
+
+export const prescribedGuideUpdateSchema = z.object({
+  staffId: z.string().optional(), // Used for verification, not for storing
+  name: z.string().min(1, "Зөвлөмжийн нэр оруулна уу").optional(),
+  description: z.string().min(1, "Зөвлөмжийн тайлбар оруулна уу").optional(),
+  dose: z.string().optional(),
+  frequency: z.string().optional()
+});
