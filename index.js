@@ -8,7 +8,10 @@ import AuthRouter from "./interfaces/routes/auth.routes.js";
 import PatientRouter from "./interfaces/routes/patient.routes.js";
 import HealthRouter from "./interfaces/routes/health.routes.js";
 import medicalStaffRouter from "./interfaces/routes/medicalstaff.routes.js";
-
+import TreatmentRouter from "./interfaces/routes/treatment.routes.js";
+import MedicalHistoryRouter from './interfaces/routes/medicalHistory.route.js';
+import MedicalTestRouter from './interfaces/routes/medicalTest.routes.js';
+import MedicineRouter from './interfaces/routes/medicine.routes.js';
 
 const app = express();
 app.use(express.json());
@@ -31,6 +34,9 @@ app.use("/api/auth", AuthRouter);
 app.use("/api/patient", PatientRouter);
 app.use("/api", HealthRouter);
 app.use("/api/medicalstaff", medicalStaffRouter);
-
+app.use("/api/treatments", TreatmentRouter);
+app.use("/api/medical-history", MedicalHistoryRouter); 
+app.use("/api/medical-tests", MedicalTestRouter);
+app.use("/api/medicine", MedicineRouter);
 console.log("working");
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
