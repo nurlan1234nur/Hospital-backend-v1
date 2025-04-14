@@ -1,5 +1,3 @@
-import Examination from "../../domain/models/Examination.model.js";
-import Questionnaire from "../../domain/models/Question.model.js";
 import DiseaseCode from "../../domain/models/Diseasecode.model.js";
 import VitalSigns from "../../domain/models/Vital.model.js";
 import Diagnosis from "../../domain/models/Diagnosis.model.js";
@@ -7,116 +5,21 @@ import Prescription from "../../domain/models/Prescription.model.js";
 import PrescribedMed from "../../domain/models/PrescribedMed.model.js";
 import PrescribedGuide from "../../domain/models/PrescribedGuide.model.js";
 
-
-
-
-
-//EXAMINATIONS
-export const createExamination = async (examinationData) => {
-  return await Examination.create(examinationData);
-};
-
-export const findExaminationById = async (id) => {
-  return await Examination.findById(id)
-    .populate("medicalStaff", "firstname lastname position specialization")
-    .populate("patient", "firstname lastname register sisiID");
-};
-
-export const updateExaminationById = async (id, updateData) => {
-  return await Examination.findByIdAndUpdate(id, updateData, {
-    new: true,
-    runValidators: true
-  }).populate("medicalStaff", "firstname lastname position specialization")
-    .populate("patient", "firstname lastname register sisiID");
-};
-
-export const deleteExaminationById = async (id) => {
-  return await Examination.findByIdAndDelete(id);
-};
-
-export const listPatientExaminations = async (patientId, filters = {}) => {
-  const query = { patient: patientId, ...filters };
-  
-  return await Examination.find(query)
-    .populate("medicalStaff", "firstname lastname position specialization")
-    .sort({ exam_date: -1 }); // Sort by examination date, most recent first
-};
-
-export const listMedicalStaffExaminations = async (staffId, filters = {}) => {
-  const query = { medicalStaff: staffId, ...filters };
-  
-  return await Examination.find(query)
-    .populate("patient", "firstname lastname register sisiID")
-    .sort({ exam_date: -1 }); // Sort by examination date, most recent first
-};
-
-
-
-
-
-//QUESTION buyu ASUUMJ
-export const createQuestionnaire = async (questionData) => {
-  return await Questionnaire.create(questionData);
-};
-
-export const findQuestionnaireById = async (id) => {
-  return await Questionnaire.findById(id)
-    .populate("patient", "firstname lastname register")
-    .populate("examination", "exam_id exam_date")
-    .populate("medicalStaff", "firstname lastname position");
-};
-
-export const updateQuestionnaireById = async (id, updateData) => {
-  return await Questionnaire.findByIdAndUpdate(id, updateData, {
-    new: true,
-    runValidators: true
-  })
-    .populate("patient", "firstname lastname register")
-    .populate("examination", "exam_id exam_date")
-    .populate("medicalStaff", "firstname lastname position");
-};
-
-export const deleteQuestionnaireById = async (id) => {
-  return await Questionnaire.findByIdAndDelete(id);
-};
-
-export const listPatientQuestionnaires = async (patientId) => {
-  return await Questionnaire.find({ patient: patientId })
-    .populate("examination", "exam_id exam_date")
-    .populate("medicalStaff", "firstname lastname position");
-};
-
-export const listExaminationQuestionnaires = async (examinationId) => {
-  return await Questionnaire.find({ examination: examinationId })
-    .populate("patient", "firstname lastname register")
-    .populate("medicalStaff", "firstname lastname position");
-};
-
-export const listMedicalStaffQuestionnaires = async (staffId) => {
-  return await Questionnaire.find({ medicalStaff: staffId })
-    .populate("patient", "firstname lastname register")
-    .populate("examination", "exam_id exam_date");
-};
-
-
-
-
-
 //DISEASE
 
 export const listAllDiseaseCodes = async (filters = {}) => {
   let query = {};
-  
+
   // If search term is provided, search in description and value fields
   if (filters.search) {
     query = {
       $or: [
-        { description: { $regex: filters.search, $options: 'i' } },
-        { value: { $regex: filters.search, $options: 'i' } }
-      ]
+        { description: { $regex: filters.search, $options: "i" } },
+        { value: { $regex: filters.search, $options: "i" } },
+      ],
     };
   }
-  
+
   return await DiseaseCode.find(query)
     .sort({ value: 1 }) // Sort by ICD-10 code
     .limit(filters.limit ? parseInt(filters.limit) : 0);
@@ -129,8 +32,6 @@ export const findDiseaseCodeById = async (id) => {
 export const findDiseaseCodeByValue = async (value) => {
   return await DiseaseCode.findOne({ value });
 };
-
-
 
 //DIAGNOSIS
 export const createDiagnosis = async (diagnosisData) => {
@@ -148,7 +49,7 @@ export const findDiagnosisById = async (id) => {
 export const updateDiagnosisById = async (id, updateData) => {
   return await Diagnosis.findByIdAndUpdate(id, updateData, {
     new: true,
-    runValidators: true
+    runValidators: true,
   })
     .populate("patient", "firstname lastname register sisiID")
     .populate("medicalStaff", "firstname lastname position specialization")
@@ -162,7 +63,7 @@ export const deleteDiagnosisById = async (id) => {
 
 export const listPatientDiagnoses = async (patientId, filters = {}) => {
   const query = { patient: patientId, ...filters };
-  
+
   return await Diagnosis.find(query)
     .populate("medicalStaff", "firstname lastname position specialization")
     .populate("diagnosisCode", "name description value")
@@ -180,15 +81,13 @@ export const listExaminationDiagnoses = async (examinationId) => {
 
 export const listMedicalStaffDiagnoses = async (staffId, filters = {}) => {
   const query = { medicalStaff: staffId, ...filters };
-  
+
   return await Diagnosis.find(query)
     .populate("patient", "firstname lastname register sisiID")
     .populate("diagnosisCode", "name description value")
     .populate("examination", "exam_id exam_date")
     .sort({ createdAt: -1 }); // Sort by creation date, most recent first
 };
-
-
 
 //VITAL SIGNS
 export const createVitalSigns = async (vitalSignsData) => {
@@ -204,7 +103,7 @@ export const findVitalSignsById = async (id) => {
 export const updateVitalSignsById = async (id, updateData) => {
   return await VitalSigns.findByIdAndUpdate(id, updateData, {
     new: true,
-    runValidators: true
+    runValidators: true,
   })
     .populate("patient", "firstname lastname register sisiID")
     .populate("medicalStaff", "firstname lastname position specialization");
@@ -228,13 +127,17 @@ export const getLatestVitalSignsByPatient = async (patientId) => {
     .populate("medicalStaff", "firstname lastname position specialization");
 };
 
-export const listVitalSignsByDateRange = async (patientId, startDate, endDate) => {
+export const listVitalSignsByDateRange = async (
+  patientId,
+  startDate,
+  endDate
+) => {
   return await VitalSigns.find({
     patient: patientId,
-    date: { 
-      $gte: new Date(startDate), 
-      $lte: new Date(endDate) 
-    }
+    date: {
+      $gte: new Date(startDate),
+      $lte: new Date(endDate),
+    },
   })
     .populate("medicalStaff", "firstname lastname position specialization")
     .sort({ date: -1 });
@@ -246,10 +149,6 @@ export const listMedicalStaffVitalSigns = async (staffId, limit = 0) => {
     .sort({ date: -1, createdAt: -1 })
     .limit(limit);
 };
-
-
-
-
 
 //Prescription
 export const createPrescription = async (prescriptionData) => {
@@ -265,7 +164,7 @@ export const findPrescriptionById = async (id) => {
 export const updatePrescriptionById = async (id, updateData) => {
   return await Prescription.findByIdAndUpdate(id, updateData, {
     new: true,
-    runValidators: true
+    runValidators: true,
   })
     .populate("prescribedBy", "firstname lastname position specialization")
     .populate("patient", "firstname lastname register sisiID");
@@ -287,11 +186,6 @@ export const listMedicalStaffPrescriptions = async (staffId) => {
     .sort({ date: -1 }); // Sort by date, most recent first
 };
 
-
-
-
-
-
 // PrescribedMed
 export const createPrescribedMed = async (prescribedMedData) => {
   return await PrescribedMed.create(prescribedMedData);
@@ -307,7 +201,7 @@ export const findPrescribedMedById = async (id) => {
 export const updatePrescribedMedById = async (id, updateData) => {
   return await PrescribedMed.findByIdAndUpdate(id, updateData, {
     new: true,
-    runValidators: true
+    runValidators: true,
   })
     .populate("patient", "firstname lastname register sisiID")
     .populate("medicalStaff", "firstname lastname position specialization")
@@ -319,8 +213,10 @@ export const deletePrescribedMedById = async (id) => {
 };
 
 export const listPrescriptionMeds = async (prescriptionId) => {
-  return await PrescribedMed.find({ prescription: prescriptionId })
-    .populate("medicalStaff", "firstname lastname position specialization");
+  return await PrescribedMed.find({ prescription: prescriptionId }).populate(
+    "medicalStaff",
+    "firstname lastname position specialization"
+  );
 };
 
 export const listPatientPrescribedMeds = async (patientId) => {
@@ -337,10 +233,7 @@ export const listMedicalStaffPrescribedMeds = async (staffId) => {
     .sort({ "prescription.date": -1 });
 };
 
-
-
-
-// PrescribedGuide 
+// PrescribedGuide
 export const createPrescribedGuide = async (prescribedGuideData) => {
   return await PrescribedGuide.create(prescribedGuideData);
 };
@@ -355,7 +248,7 @@ export const findPrescribedGuideById = async (id) => {
 export const updatePrescribedGuideById = async (id, updateData) => {
   return await PrescribedGuide.findByIdAndUpdate(id, updateData, {
     new: true,
-    runValidators: true
+    runValidators: true,
   })
     .populate("patient", "firstname lastname register sisiID")
     .populate("medicalStaff", "firstname lastname position specialization")
@@ -367,8 +260,10 @@ export const deletePrescribedGuideById = async (id) => {
 };
 
 export const listPrescriptionGuides = async (prescriptionId) => {
-  return await PrescribedGuide.find({ prescription: prescriptionId })
-    .populate("medicalStaff", "firstname lastname position specialization");
+  return await PrescribedGuide.find({ prescription: prescriptionId }).populate(
+    "medicalStaff",
+    "firstname lastname position specialization"
+  );
 };
 
 export const listPatientPrescribedGuides = async (patientId) => {
