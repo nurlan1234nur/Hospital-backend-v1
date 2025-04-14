@@ -3,8 +3,8 @@ const { Schema } = mongoose;
 
 const questionnaireSchema = new Schema(
   {
-    patient: { type: Schema.Types.ObjectId, ref: "Patient" },
-    medicalStaff: { type: Schema.Types.ObjectId, ref: "MedicalStaff" },
+    patient_id: { type: Schema.Types.ObjectId, ref: "Patient" },
+    medicalStaff_id: { type: Schema.Types.ObjectId, ref: "MedicalStaff" },
   },
   { timestamps: true }
 );
