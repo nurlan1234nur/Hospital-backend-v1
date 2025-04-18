@@ -3,6 +3,7 @@ dotenv.config();
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
+import { performance } from 'perf_hooks';
 import bodyParser from "body-parser";
 import AuthRouter from "./interfaces/routes/auth.routes.js";
 import PatientRouter from "./interfaces/routes/patient.routes.js";
@@ -16,6 +17,17 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(bodyParser.json());
+app.use((req, res, next) => {
+  const start = performance.now();
+
+  res.on('finish', () => {
+    const end = performance.now();
+    const duration = (end - start).toFixed(2);
+    console.log(`${req.method} ${req.originalUrl} - ${duration} ms`);
+  });
+
+  next();
+});
 
 const PORT = process.env.PORT || 8000;
 const MONGO_URI = process.env.MONGO_URI;
@@ -37,5 +49,4 @@ app.use("/api/examination", ExaminationRouter);
 app.use("/api/questionnaire", QuestionnaireRouter);
 app.use("/api/question", QuestionRouter);
 
-console.log("working");
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
