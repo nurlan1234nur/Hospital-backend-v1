@@ -1,4 +1,4 @@
-import { createVitalSignsUseCases } from "../../application/use_cases/vitalSignsUseCases";
+import { createVitalSignsUseCases } from "../../application/use_cases/vitalSignsUseCases.js";
 
 //VITAL SIGNS
 const {

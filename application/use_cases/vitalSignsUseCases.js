@@ -8,7 +8,7 @@ import {
   getLatestVitalSignsByPatient,
   listVitalSignsByDateRange,
   listMedicalStaffVitalSigns,
-} from "../../infrastructure/repositories/medicalStaffRepository.js";
+} from "../../infrastructure/repositories/vitalSignsRepository.js";
 import { createError } from "../../utils/error.js";
 
 export const createVitalSignsUseCases = () => {
