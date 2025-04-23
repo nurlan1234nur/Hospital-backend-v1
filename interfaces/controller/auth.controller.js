@@ -3,7 +3,7 @@ import {
   medicalStaffSignupSchema,
   patientSignupSchema,
 } from "../../utils/validators.js";
-import { toPublicUser } from "../../utils/formatter.js";
+import { toPublicMedStaff, toPublicUser } from "../../utils/formatter.js";
 import { createUserUseCases } from "../../application/use_cases/authUseCases.js";
 const { registerPatient, registerAdmin, registerDoctor, registerNurse, login } =
   createUserUseCases();
@@ -45,7 +45,7 @@ export const signIn = async (req, res) => {
         ? toPublicUser(user)
         : user?.role === "Patient"
         ? toPublicUser(user)
-        : toPublicUser(user);
+        : toPublicMedStaff(user);
 
     return sendTokenResponse(
       res,

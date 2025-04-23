@@ -12,47 +12,56 @@ import {
 } from "../controller/examination.controller.js";
 
 const router = express.Router();
+router.use(authenticateJWT);
 
-router.post("/exam/", authorizeRole(["MedicalStaff"]), createExamination);
+router.post(
+  "/", 
+  authorizeRole(["MedicalStaff"]), 
+  createExamination
+);
 
 router.get(
-  "/exam/:id",
+  "/:id",
   authorizeRole(["MedicalStaff", "Admin"]),
   getExaminationById
 );
 
-router.put("/exam/:id", authorizeRole(["MedicalStaff"]), updateExaminationById);
+router.put(
+  "/:id", 
+  authorizeRole(["MedicalStaff"]), 
+  updateExaminationById
+);
 
 router.delete(
-  "/exam/:id",
+  "/:id",
   authorizeRole(["MedicalStaff"]),
   deleteExaminationById
 );
 
 // Get all examinations for a specific patient
 router.get(
-  "/patient/exam/:patientId",
+  "/patient/:patientId",
   authorizeRole(["MedicalStaff", "Admin"]),
   getPatientExaminationHistory
 );
 
 //doctor gets their exams
 router.get(
-  "/my-examinations",
+  "/doctor/my-examinations",
   authorizeRole(["MedicalStaff"]),
   getMedicalStaffExamHistory
 );
 
 // Get all diagnoses for a specific examination (for medical staff and the patient)
 router.get(
-  "/examination/diagnosis/:examinationId",
+  "/diagnosis/:examinationId",
   authorizeRole(["MedicalStaff", "Admin"]),
   getExaminationDiagnosisList
 );
 
 // Get all diagnoses for a specific examination (patient can only view their own examinations)
 router.get(
-  "/examination/:examinationId/diagnoses",
+  "/:examinationId/diagnoses",
   authenticateJWT,
   authorizeRole(["Patient"]),
   getExaminationDiagnosisList

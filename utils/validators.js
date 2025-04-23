@@ -271,3 +271,79 @@ export const prescribedGuideUpdateSchema = z.object({
   dose: z.string().optional(),
   frequency: z.string().optional(),
 });
+
+
+export const medicineSchema = z.object({
+  name: z.string().min(1, "Эмийн нэр оруулна уу"),
+  dosage: z.string().min(1, "Тун оруулна уу"),
+  price: z.number().min(0, "Үнэ 0-ээс их байх ёстой"),
+  quantity: z.number().int().min(0, "Тоо хэмжээ 0-ээс их байх ёстой"),
+  expiryDate: z
+    .preprocess((arg) => {
+      return typeof arg === "string" || arg instanceof Date
+        ? new Date(arg)
+        : undefined;
+    }, z.date())
+    .optional(),
+  medicalStaff: z.string().min(1, "Эмч/Сувилагчийн ID оруулна уу"),
+});
+
+export const medicineUpdateSchema = z.object({
+  staffId: z.string().optional(), // Used for verification, not for storing
+  name: z.string().min(1, "Эмийн нэр оруулна уу").optional(),
+  dosage: z.string().min(1, "Тун оруулна уу").optional(),
+  price: z.number().min(0, "Үнэ 0-ээс их байх ёстой").optional(),
+  quantity: z.number().int().min(0, "Тоо хэмжээ 0-ээс их байх ёстой").optional(),
+  expiryDate: z
+    .preprocess((arg) => {
+      return typeof arg === "string" || arg instanceof Date
+        ? new Date(arg)
+        : undefined;
+    }, z.date())
+    .optional(),
+});
+
+// Stock Validators
+export const stockSchema = z.object({
+  quantity: z.string().min(1, "Тоо хэмжээ оруулна уу"),
+  medicine: z.string().optional(),
+  treatment: z.string().optional(),
+  medicalStaff: z.string().min(1, "Эмч/Сувилагчийн ID оруулна уу"),
+});
+
+export const stockUpdateSchema = z.object({
+  staffId: z.string().optional(), // Used for verification, not for storing
+  quantity: z.string().min(1, "Тоо хэмжээ оруулна уу").optional(),
+  medicine: z.string().optional(),
+  treatment: z.string().optional(),
+});
+
+// Treatment Validators
+export const treatmentSchema = z.object({
+  date: z.preprocess((arg) => {
+    return typeof arg === "string" || arg instanceof Date
+      ? new Date(arg)
+      : undefined;
+  }, z.date()).optional(),
+  treatmentType: z.enum(["Uvch", "Bumba", "Sharlaga", "Dusal", "Taria"]),
+  diagnosisType: z.enum(["in", "out"]),
+  totalQuantity: z.number().int().min(1, "Нийт эмчилгээний тоо 1-ээс их байх ёстой"),
+  sessionsCompleted: z.number().int().min(0, "Хийгдсэн эмчилгээний тоо 0-ээс их байх ёстой").optional(),
+  examination_id: z.string().optional(),
+  patient: z.string().min(1, "Өвчтөний ID оруулна уу"),
+  medicalStaff: z.string().min(1, "Эмч/Сувилагчийн ID оруулна уу"),
+});
+
+export const treatmentUpdateSchema = z.object({
+  staffId: z.string().optional(), // Used for verification, not for storing
+  date: z.preprocess((arg) => {
+    return typeof arg === "string" || arg instanceof Date
+      ? new Date(arg)
+      : undefined;
+  }, z.date()).optional(),
+  treatmentType: z.enum(["Uvch", "Bumba", "Sharlaga", "Dusal", "Taria"]).optional(),
+  diagnosisType: z.enum(["in", "out"]).optional(),
+  totalQuantity: z.number().int().min(1, "Нийт эмчилгээний тоо 1-ээс их байх ёстой").optional(),
+  sessionsCompleted: z.number().int().min(0, "Хийгдсэн эмчилгээний тоо 0-ээс их байх ёстой").optional(),
+  examination_id: z.string().optional(),
+});

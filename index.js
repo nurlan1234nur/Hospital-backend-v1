@@ -15,6 +15,9 @@ import QuestionRouter from "./interfaces/routes/question.routes.js";
 import DiseaseRouter from "./interfaces/routes/diseases.routes.js";
 import DiagnosisRouter from "./interfaces/routes/diagnosis.routes.js";
 import PrescriptionRouter from "./interfaces/routes/prescription.routes.js";
+import MedicineRouter from "./interfaces/routes/medicine.routes.js";
+import StockRouter from "./interfaces/routes/stock.routes.js";
+import TreatmentRouter from "./interfaces/routes/treatment.routes.js";
 
 
 const app = express();
@@ -54,6 +57,9 @@ app.use("/api/questionnaire", QuestionnaireRouter);
 app.use("/api/question", QuestionRouter);
 app.use("/api/diseases", DiseaseRouter);
 app.use("/api/diagnosis", DiagnosisRouter);
-app.use("/api/prescription", PrescriptionRouter)
+app.use("/api/prescription", PrescriptionRouter);
+app.use("/api/medicine", MedicineRouter);
+app.use("/api/stock", StockRouter);
+app.use("/api/treatment", TreatmentRouter);
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

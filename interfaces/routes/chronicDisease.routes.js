@@ -15,10 +15,13 @@ import { authenticateJWT, authorizeRole } from "../middleware/auth.js";
 import express from "express";
 
 const router = express.Router();
+router.use(authenticateJWT);
 
 //CHRONIC DISEASE
 
-router.get("/my/diseases", authorizeRole(["Patient"]), getMyChronicDiseases);
+router.get("/my/diseases", 
+authorizeRole(["Patient"]), 
+getMyChronicDiseases);
 
 router.post("/my/diseases", authorizeRole(["Patient"]), createMyChronicDisease);
 

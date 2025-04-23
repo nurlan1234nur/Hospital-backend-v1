@@ -22,7 +22,7 @@ router.get(
   getOwnExaminations
 );
 
-//DIAGNOSIS
+
 
 
 
