@@ -18,6 +18,8 @@ import PrescriptionRouter from "./interfaces/routes/prescription.routes.js";
 import MedicineRouter from "./interfaces/routes/medicine.routes.js";
 import StockRouter from "./interfaces/routes/stock.routes.js";
 import TreatmentRouter from "./interfaces/routes/treatment.routes.js";
+import VitalRouter from "./interfaces/routes/vitals.routes.js";
+
 
 
 const app = express();
@@ -61,5 +63,6 @@ app.use("/api/prescription", PrescriptionRouter);
 app.use("/api/medicine", MedicineRouter);
 app.use("/api/stock", StockRouter);
 app.use("/api/treatment", TreatmentRouter);
+app.use("/api/vital", VitalRouter);
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

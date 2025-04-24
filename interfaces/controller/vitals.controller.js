@@ -203,3 +203,15 @@ export const getMyVitalSignsByStaff = async (req, res) => {
     return handleZodOrAppError(res, error);
   }
 };
+const handleZodOrAppError = (res, error, fallbackStatus = 400) => {
+  if (error.name === "ZodError") {
+    const errors = error.errors.map((e) => ({
+      field: e.path[0],
+      message: e.message,
+    }));
+    return res.status(400).json({ errors });
+  }
+  const status = error.statusCode || fallbackStatus;
+  const message = error.message || "Something went wrong";
+  return res.status(status).json({ error: message });
+};

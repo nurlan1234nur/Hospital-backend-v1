@@ -10,12 +10,14 @@ import {
   getPatientVitalSignsByDateRange,
   getMyVitalSignsByStaff,
   getMyVitalSigns,
-  getPatientVitalSignsByDateRange,
-  getVitalSignsById,
-} from "../controller/vitals.controller";
+  getMyLatestVitalSigns,
+
+} from "../controller/vitals.controller.js";
 import { authenticateJWT, authorizeRole } from "../middleware/auth.js";
 
+
 const router = express.Router();
+router.use(authenticateJWT);
 
 router.post("/vitalsigns", authorizeRole(["MedicalStaff"]), createVitalSigns);
 

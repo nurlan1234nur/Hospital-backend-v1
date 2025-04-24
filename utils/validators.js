@@ -4,19 +4,11 @@ export const adminSignupSchema = z.object({
   firstname: z
     .string()
     .min(1, { message: "Name is required" })
-    .max(50, { message: "Name must be at most 50 characters" })
-    .regex(/^[A-Za-z\s'-]+$/, {
-      message:
-        "Name can only contain letters, spaces, hyphens, and apostrophes",
-    }),
+    .max(50, { message: "Name must be at most 50 characters" }),
   lastname: z
     .string()
     .min(1, { message: "Name is required" })
-    .max(50, { message: "Name must be at most 50 characters" })
-    .regex(/^[A-Za-z\s'-]+$/, {
-      message:
-        "Name can only contain letters, spaces, hyphens, and apostrophes",
-    }),
+    .max(50, { message: "Name must be at most 50 characters" }),
   email: z.string().email("Invalid email format"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
@@ -25,44 +17,47 @@ export const medicalStaffSignupSchema = z.object({
   firstname: z
     .string()
     .min(1, { message: "Name is required" })
-    .max(50, { message: "Name must be at most 50 characters" })
-    .regex(/^[A-Za-z\s'-]+$/, {
-      message:
-        "Name can only contain letters, spaces, hyphens, and apostrophes",
-    }),
+    .max(50, { message: "Name must be at most 50 characters" }),
   lastname: z
     .string()
     .min(1, { message: "Name is required" })
-    .max(50, { message: "Name must be at most 50 characters" })
-    .regex(/^[A-Za-z\s'-]+$/, {
-      message:
-        "Name can only contain letters, spaces, hyphens, and apostrophes",
-    }),
+    .max(50, { message: "Name must be at most 50 characters" }),
   email: z.string().email("Invalid email format"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
 export const patientSignupSchema = z.object({
-  firstname: z
-    .string()
-    .min(1, { message: "Name is required" })
-    .max(50, { message: "Name must be at most 50 characters" })
-    .regex(/^[A-Za-z\s'-]+$/, {
-      message:
-        "Name can only contain letters, spaces, hyphens, and apostrophes",
-    }),
-  lastname: z
-    .string()
-    .min(1, { message: "Name is required" })
-    .max(50, { message: "Name must be at most 50 characters" })
-    .regex(/^[A-Za-z\s'-]+$/, {
-      message:
-        "Name can only contain letters, spaces, hyphens, and apostrophes",
-    }),
-  email: z.string().email("Invalid email format"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  firstname: z.string().min(1, { message: "Нэр шаардлагатай" }),
+  lastname: z.string().min(1, { message: "Овог шаардлагатай" }),
+  email: z.string().email("Цахим шуудангийн формат буруу"),
+  password: z.string().min(6, "Нууц үг хамгийн багадаа 6 тэмдэгт байх ёстой"),
   type: z.enum(["Student", "Staff", "Teacher"]),
+  phoneNumber: z.string().min(1, "Утасны дугаар шаардлагатай"),
+  register: z.string().min(10, "Регистрийн дугаар буруу"),
+  sisiID: z.string().optional(),
+  school: z.string().optional(),
+  address: z.string().optional(),
+  occupation: z.string().optional(),
+  education: z.string().optional(),
+  birthOfDate: z.string().optional(), // эсвэл z.date().optional() гэж хийж болно
+  gender: z.enum(["male", "female"]).optional()
 });
+export const patientUpdateSchema = z.object({
+  firstname: z.string().min(1, "Нэр шаардлагатай").optional(),
+  lastname: z.string().min(1, "Овог шаардлагатай").optional(),
+  email: z.string().email("Цахим шуудангийн формат буруу").optional(),
+  type: z.enum(["Student", "Staff", "Teacher", "Patient"]).optional(),
+  phoneNumber: z.string().min(1, "Утасны дугаар шаардлагатай").optional(),
+  register: z.string().min(10, "Регистрийн дугаар буруу").optional(),
+  sisiID: z.string().optional(),
+  school: z.string().optional(),
+  address: z.string().optional(),
+  occupation: z.string().optional(),
+  education: z.string().optional(),
+  birthOfDate: z.string().optional(),
+  gender: z.enum(["male", "female"]).optional()
+});
+
 //exam
 
 export const examinationSchema = z.object({

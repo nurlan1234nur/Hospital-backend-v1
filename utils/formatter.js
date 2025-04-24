@@ -16,6 +16,15 @@ export const toPublicPatient = (doc) => {
     email: doc.email,
     phoneNumber: doc.phoneNumber,
     role:doc.role, //tur
+    birthOfDate:doc.birthOfDate,
+    type:doc.type,
+    register:doc.register,
+    address:doc.address,
+    school:doc.school,
+    sisiID:doc.sisiID,
+    occupation:doc.occupation,
+    education:doc.education,
+    gender:doc.gender
   };
 };
 export const toPublicMedStaff = (doc) => {

@@ -2,7 +2,6 @@ import {
   createVitalSigns,
   findVitalSignsById,
   updateVitalSignsById,
-  findVitalSignsById,
   deleteVitalSignsById,
   listPatientVitalSigns,
   getLatestVitalSignsByPatient,

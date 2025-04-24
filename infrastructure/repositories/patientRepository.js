@@ -5,6 +5,27 @@ import ChronicDiseases from "../../domain/models/ChronicDiseases.model.js";
 export const listAllPatients = async (filters = {}) => {
   return await Patient.find(filters);
 };
+export const findPatientById = async (id) => {
+  return await Patient.findById(id).populate('user', 'firstName lastName fullName role');
+};
+
+export const findPatientByUserId = async (userId) => {
+  return await Patient.findOne({ user: userId }).populate('user', 'firstName lastName fullName role');
+};
+export const createPatient = async (patientData) => {
+  return await Patient.create(patientData);
+};
+
+export const updatePatientById = async (id, updateData) => {
+  return await Patient.findByIdAndUpdate(id, updateData, {
+    new: true,
+    runValidators: true
+  });
+};
+
+export const deletePatientById = async (id) => {
+  return await Patient.findByIdAndDelete(id);
+};
 
 //allergy
 export const createAllergy = async (allergyData) => {
@@ -30,6 +51,7 @@ export const listPatientAllergies = async (patientId) => {
   return await Allergies.find({ patient: patientId })
     .sort({ date_of_onset: -1 });
 };
+
 
 
 //CHRINIC DISEASE
