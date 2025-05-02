@@ -39,3 +39,47 @@ app.use("/api/question", QuestionRouter);
 
 console.log("working");
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+
+// // DiplomFront/Node-backend/src/app.js
+// import express from 'express';
+// import mongoose from 'mongoose';
+// import dotenv from 'dotenv';
+// import cors from 'cors';
+// import examinationRoutes from './routes/examination.routes.js';
+// import authRoutes from './routes/auth.routes.js';
+
+// // Тохиргооны хувьсагчид ачаалах
+// dotenv.config();
+
+// const app = express();
+
+// // CORS тохиргоо
+// app.use(cors({
+//   origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+//   credentials: true
+// }));
+
+// // JSON боловсруулалт
+// app.use(express.json());
+
+// // MongoDB холболт
+// mongoose.connect(process.env.MONGODB_URI)
+//   .then(() => console.log('МонгоDB холбогдлоо'))
+//   .catch(err => console.error('МонгоDB холболтын алдаа:', err));
+
+// // Роутерууд
+// app.use('/api/examinations', examinationRoutes);
+// app.use('/api/auth', authRoutes);
+
+// // Алдааны боловсруулагч
+// app.use((err, req, res, next) => {
+//   const status = err.status || 500;
+//   const message = err.message || 'Алдаа гарлаа';
+//   res.status(status).json({ success: false, message });
+// });
+
+// const PORT = process.env.PORT || 5000;
+// app.listen(PORT, () => {
+//   console.log(`Сервер ${PORT} порт дээр ажиллаж байна`);
+// });
