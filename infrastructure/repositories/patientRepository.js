@@ -6,7 +6,7 @@ export const listAllPatients = async (filters = {}) => {
   return await Patient.find(filters);
 };
 export const findPatientById = async (id) => {
-  return await Patient.findById(id).populate('user', 'firstName lastName fullName role');
+  return await Patient.findById(id).select("firstname lastname email phoneNumber sisiID register gender birthOfDate");
 };
 
 export const findPatientByUserId = async (userId) => {
