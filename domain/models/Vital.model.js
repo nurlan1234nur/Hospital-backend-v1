@@ -2,6 +2,7 @@ import { Schema, model } from 'mongoose';
 
 const VitalSignsSchema = new Schema(
   {
+    vital_signs_id: {type: Number, unique: true, required: true},
     date:{type:Date},
     concsiousness_status:{type:String},
     heart_rate: { type: Number },

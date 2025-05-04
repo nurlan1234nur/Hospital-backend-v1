@@ -13,18 +13,17 @@ import { createError } from "../../utils/error.js";
 export const createVitalSignsUseCases = () => {
   const addVitalSigns = async (vitalSignsData) => {
     // Generate unique vital_signs_id
-    const vitalId = Date.now();
+    if (!vitalSignsData.vital_signs_id) {
+        vitalSignsData.vital_signs_id = Date.now() + Math.floor(Math.random() * 1000);
+        // console.log(vitalSignsData.vital_signs_id)
+    }
 
     // If date isn't provided, use current date
     if (!vitalSignsData.date) {
       vitalSignsData.date = new Date();
     }
 
-    const vitalSigns = await createVitalSigns({
-      ...vitalSignsData,
-      vital_signs_id: vitalId,
-    });
-
+    const vitalSigns = await createVitalSigns(vitalSignsData);
     return vitalSigns;
   };
 
