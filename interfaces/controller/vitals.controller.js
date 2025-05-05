@@ -215,3 +215,19 @@ const handleZodOrAppError = (res, error, fallbackStatus = 400) => {
   const message = error.message || "Something went wrong";
   return res.status(status).json({ error: message });
 };
+
+// This function handles creating vital signs from the /vitalsigns/receive endpoint
+export const createVitalSignsFromIoT = async (data, req, res) => {
+  try {
+    const vitalSignsData = {
+      ...data,
+      medicalStaff: req.user.id
+    };
+    const vitalSigns = await addVitalSigns(vitalSignsData);
+
+    return vitalSigns;
+  } catch (error) {
+    return handleZodOrAppError(res, error);
+  }
+}
+  
