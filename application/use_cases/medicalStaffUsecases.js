@@ -1,0 +1,45 @@
+import { createError } from "../../utils/error.js";
+import {
+  listAllMedicalStaff,
+  findMedicalStaffById,
+  createMedicalStaff,
+  updateMedicalStaffById,
+  deleteMedicalStaffById
+} from "../../infrastructure/repositories/medicalStaffRepository.js";
+
+export const createMedicalStaffUseCases = () => {
+  const listStaff = async (filters = {}) => {
+    return await listAllMedicalStaff(filters);
+  };
+
+  const getStaff = async (id) => {
+    const staff = await findMedicalStaffById(id);
+    if (!staff) throw createError("Ажилтан олдсонгүй!", 404);
+    return staff;
+  };
+
+  const addStaff = async (data) => {
+    return await createMedicalStaff(data);
+  };
+
+  const updateStaff = async (id, updateData) => {
+    const staff = await findMedicalStaffById(id);
+    if (!staff) throw createError("Ажилтан олдсонгүй!", 404);
+    return await updateMedicalStaffById(id, updateData);
+  };
+
+  const removeStaff = async (id) => {
+    const staff = await findMedicalStaffById(id);
+    if (!staff) throw createError("Ажилтан олдсонгүй!", 404);
+    await deleteMedicalStaffById(id);
+    return { success: true, message: "Ажилтан амжилттай устгагдлаа!" };
+  };
+
+  return {
+    listStaff,
+    getStaff,
+    addStaff,
+    updateStaff,
+    removeStaff
+  };
+};

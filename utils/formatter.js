@@ -36,6 +36,7 @@ export const toPublicMedStaff = (doc) => {
     phoneNumber: doc.phoneNumber,
     role:doc.role, //tur
     position: doc.position,
+    specialization: doc.specialization,
   };
 };
 
