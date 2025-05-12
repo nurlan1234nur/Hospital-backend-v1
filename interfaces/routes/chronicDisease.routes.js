@@ -39,32 +39,32 @@ router.delete(
 
 //=================CHRONIC DISEASE=====================
 router.post(
-  "/chrodis",
+  "/",
   authorizeRole(["MedicalStaff", "Admin"]),
   createChronicDisease
 );
 
 router.get(
-  "/chrodis/:id",
+  "/:id",
   authorizeRole(["MedicalStaff", "Admin", "Patient"]),
   getChronicDiseaseById
 );
 
 router.put(
-  "/chrodis/:id",
+  "/:id",
   authorizeRole(["MedicalStaff", "Admin"]),
   updateChronicDiseaseById
 );
 
 router.delete(
-  "/chrodis/:id",
+  "/:id",
   authorizeRole(["MedicalStaff", "Admin"]),
   deleteChronicDiseaseById
 );
 
 // Get all chronic diseases for a specific patient (medical staff and admin)
 router.get(
-  "/patient/chrodis/:patientId",
+  "/patient/:patientId",
   authorizeRole(["MedicalStaff", "Admin"]),
   getPatientChronicDiseaseList
 );

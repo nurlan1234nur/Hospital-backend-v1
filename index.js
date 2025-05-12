@@ -20,6 +20,7 @@ import StockRouter from "./interfaces/routes/stock.routes.js";
 import TreatmentRouter from "./interfaces/routes/treatment.routes.js";
 import VitalRouter from "./interfaces/routes/vitals.routes.js";
 import AllergyRouter from "./interfaces/routes/allergy.routes.js";
+import CHDisRouter from "./interfaces/routes/chronicDisease.routes.js";
 
 
 const app = express();
@@ -65,5 +66,6 @@ app.use("/api/medicine", MedicineRouter);
 app.use("/api/stock", StockRouter);
 app.use("/api/treatment", TreatmentRouter);
 app.use("/api/vital", VitalRouter);
+app.use("/api/chronicdisease", CHDisRouter);
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
