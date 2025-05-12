@@ -6,6 +6,7 @@ import {
   updateMedicalStaffById,
   deleteMedicalStaffById
 } from "../../infrastructure/repositories/medicalStaffRepository.js";
+import bcrypt from "bcrypt";
 
 export const createMedicalStaffUseCases = () => {
   const listStaff = async (filters = {}) => {
@@ -19,14 +20,23 @@ export const createMedicalStaffUseCases = () => {
   };
 
   const addStaff = async (data) => {
-    return await createMedicalStaff(data);
+      const hashedPassword = await bcrypt.hash(data.password, 10);
+      return await createMedicalStaff({ ...data, password: hashedPassword });
+    
   };
 
   const updateStaff = async (id, updateData) => {
     const staff = await findMedicalStaffById(id);
     if (!staff) throw createError("Ажилтан олдсонгүй!", 404);
+  
+    // Хэрвээ шинэ нууц үг ирсэн бол bcrypt ашиглан hash хийх
+    if (updateData.password) {
+      updateData.password = await bcrypt.hash(updateData.password, 10);
+    }
+  
     return await updateMedicalStaffById(id, updateData);
   };
+  
 
   const removeStaff = async (id) => {
     const staff = await findMedicalStaffById(id);
