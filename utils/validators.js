@@ -131,6 +131,7 @@ export const allergyUpdateSchema = z.object({
         : undefined;
     }, z.date())
     .optional(),
+    
 });
 
 export const chronicDiseaseSchema = z.object({

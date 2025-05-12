@@ -12,6 +12,8 @@ import {
   getPatientAllergyList,
   updateAllergyById,
 } from "../controller/allergy.controller.js";
+const router = express.Router();
+router.use(authenticateJWT);
 
 // Patient-specific routes for managing their own allergies
 router.get("/my/allergies", authorizeRole(["Patient"]), getMyAllergies);
@@ -32,25 +34,25 @@ router.delete(
 
 //=====================ALLERGY==========================
 router.post(
-  "/allergy",
+  "/",
   authorizeRole(["MedicalStaff", "Admin"]),
   createAllergy
 );
 
 router.get(
-  "/allergy/:id",
+  "/:id",
   authorizeRole(["MedicalStaff", "Admin", "Patient"]),
   getAllergyById
 );
 
 router.put(
-  "/allergy/:id",
+  "/:id",
   authorizeRole(["MedicalStaff", "Admin"]),
   updateAllergyById
 );
 
 router.delete(
-  "/allergy/:id",
+  "/:id",
   authorizeRole(["MedicalStaff", "Admin"]),
   deleteAllergyById
 );
@@ -61,3 +63,5 @@ router.get(
   authorizeRole(["MedicalStaff", "Admin"]),
   getPatientAllergyList
 );
+
+export default router;

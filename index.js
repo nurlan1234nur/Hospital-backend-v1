@@ -19,7 +19,7 @@ import MedicineRouter from "./interfaces/routes/medicine.routes.js";
 import StockRouter from "./interfaces/routes/stock.routes.js";
 import TreatmentRouter from "./interfaces/routes/treatment.routes.js";
 import VitalRouter from "./interfaces/routes/vitals.routes.js";
-
+import AllergyRouter from "./interfaces/routes/allergy.routes.js";
 
 
 const app = express();
@@ -51,6 +51,7 @@ mongoose
   .catch((err) => console.error("MongoDB connection error:", err));
 
 app.use("/api/auth", AuthRouter);
+app.use("/api/allergy", AllergyRouter);
 app.use("/api/patient", PatientRouter);
 app.use("/api", HealthRouter);
 app.use("/api/medicalstaff", MedicalStaffRouter);
