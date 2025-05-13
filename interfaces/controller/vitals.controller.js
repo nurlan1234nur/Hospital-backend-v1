@@ -1,233 +1,159 @@
-import { createVitalSignsUseCases } from "../../application/use_cases/vitalSignsUseCases.js";
+import express from "express";
+
+import {
+  createVitalSigns,
+  getVitalSignsById,
+  updateVitalSignsById,
+  deleteVitalSignsById,
+  getPatientVitalSignsList,
+  getPatientLatestVitalSigns,
+  getPatientVitalSignsByDateRange,
+  getMyVitalSignsByStaff,
+  getMyVitalSigns,
+  getMyLatestVitalSigns,
+  createVitalSignsFromIoT
+} from "../controller/vitals.controller.js";
+import { authenticateJWT, authorizeRole } from "../middleware/auth.js";
+import VitalSigns from "../../domain/models/Vital.model.js";
+import { DateTime } from 'luxon';
+
+const router = express.Router();
+router.use(authenticateJWT);
+
+router.post("/vitalsigns", authorizeRole(["MedicalStaff"]), createVitalSigns);
+
+router.get(
+  '/vitalsigns/latest',
+  authorizeRole(['Patient', 'MedicalStaff', 'Admin']),
+  async (req, res) => {
+    try {
+      const latestVital = await VitalSigns.findOne({ medicalStaff: req.user.id })
+        .sort({ createdAt: -1 })
+        .limit(1);
+
+      if (!latestVital) return res.status(404).json({ message: 'No vital signs found' });
+
+      res.status(200).json({
+        systolic: latestVital.right_systolic || latestVital.left_systolic,
+        diastolic: latestVital.right_diastolic || latestVital.left_diastolic,
+        mean_arterial_pressure: latestVital.right_mean_arterial_pressure || latestVital.left_mean_arterial_pressure,
+        heart_rate: latestVital.right_heart_rate || latestVital.left_heart_rate
+      });
+    } catch (err) {
+      res.status(500).json({ message: 'Failed to fetch latest vital signs', error: err.message });
+    }
+  }
+);
+
+router.get(
+  "/vitalsigns/:id",
+  authorizeRole(["MedicalStaff"]),
+  getVitalSignsById
+);
+
+router.put(
+  "/vitalsigns/:id",
+  authorizeRole(["MedicalStaff"]),
+  updateVitalSignsById
+);
+
+router.delete(
+  "/vitalsigns/:id",
+  authorizeRole(["MedicalStaff"]),
+  deleteVitalSignsById
+);
+
+router.get(
+  "/patient/:patientId/vitalsigns",
+  authorizeRole(["MedicalStaff"]),
+  getPatientVitalSignsList
+);
+
+router.get(
+  "/patient/:patientId/vitalsigns/latest",
+  authorizeRole(["MedicalStaff"]),
+  getPatientLatestVitalSigns
+);
+
+router.get(
+  "/patient/:patientId/vitalsigns/daterange",
+  authorizeRole(["MedicalStaff"]),
+  getPatientVitalSignsByDateRange
+);
+
+router.get(
+  "/vitalsigns/my/recorded",
+  authorizeRole(["MedicalStaff"]),
+  getMyVitalSignsByStaff
+);
+
+router.get(
+  "/vitalsigns/my/latest",
+  authorizeRole(["Patient"]),
+  getMyLatestVitalSigns
+);
 
 //VITAL SIGNS
-const {
-  addVitalSigns,
-  getVitalSigns,
-  updateVitalSigns,
-  removeVitalSigns,
-  getPatientVitalSignsHistory,
-  getLatestVitalSigns,
-  getVitalSignsByDateRange,
-  getMedicalStaffVitalSigns,
-} = createVitalSignsUseCases();
+router.get("/vitalsigns/:id", authorizeRole(["Patient"]), getVitalSignsById);
 
-export const createVitalSigns = async (req, res) => {
-  try {
-    // Add the medical staff ID from authenticated user
-    const vitalSignsData = {
-      ...req.body,
-      medicalStaff: req.user.id,
-    };
+router.get(
+  "/vitalsigns/my/recorded",
+  authorizeRole(["Patient"]),
+  getMyVitalSigns
+);
 
-    // Parse date if it's a string
-    if (vitalSignsData.date && typeof vitalSignsData.date === "string") {
-      vitalSignsData.date = new Date(vitalSignsData.date);
+router.get(
+  "/vitalsigns/my/daterange",
+  authorizeRole(["Patient"]),
+  (req, res, next) => {
+    req.params.patientId = req.user.id;
+    next();
+  },
+  getPatientVitalSignsByDateRange
+);
+
+router.post(
+  "/vitalsigns/receive",
+  authorizeRole(["MedicalStaff", "Admin"]),
+  async (req, res) => {
+    try {
+      const { diastolic, meanArterialPressure, pulseRate, systolic } = req.body;
+
+      if (!diastolic || !systolic || !pulseRate) {
+        return res.status(400).json({ message: "Missing required fields" });
+      }
+
+      // Generate a unique vital_signs_id if not provided
+      const vital_signs_id = Date.now() + Math.floor(Math.random() * 1000);
+
+      // Create a new vital signs record with only the blood pressure data
+      const newVitalSign = new VitalSigns({
+        vital_signs_id: vital_signs_id,
+        right_diastolic: diastolic,
+        right_mean_arterial_pressure: meanArterialPressure,
+        right_heart_rate: pulseRate,
+        right_systolic: systolic,
+        medicalStaff: req.user.id,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now()
+      });
+
+      await newVitalSign.save();
+
+      res.status(201).json({ 
+        message: "Vital signs received successfully",
+        data: {
+          systolic: systolic,
+          diastolic: diastolic,
+          mean_arterial_pressure: meanArterialPressure,
+          heart_rate: pulseRate
+        }
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Failed to save vital signs data", error: err.message });
     }
-
-    // Validate input
-    const validatedData = vitalSignsSchema.parse(vitalSignsData);
-
-    const vitalSigns = await addVitalSigns(validatedData);
-
-    return res.status(201).json({
-      success: true,
-      message: "Амин үзүүлэлтийн мэдээлэл амжилттай бүртгэгдлээ!",
-      data: vitalSigns,
-    });
-  } catch (error) {
-    return handleZodOrAppError(res, error);
   }
-};
+);
 
-export const getVitalSignsById = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const vitalSigns = await getVitalSigns(id);
-
-    return res.status(200).json({
-      success: true,
-      data: vitalSigns,
-    });
-  } catch (error) {
-    return handleZodOrAppError(res, error);
-  }
-};
-
-export const updateVitalSignsById = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    // Add staff ID for verification that they recorded these vital signs
-    const updateData = {
-      ...req.body,
-      staffId: req.user.id,
-    };
-
-    // Parse date if it's a string
-    if (updateData.date && typeof updateData.date === "string") {
-      updateData.date = new Date(updateData.date);
-    }
-
-    // Validate update data
-    const validatedData = vitalSignsUpdateSchema.parse(updateData);
-
-    const updatedVitalSigns = await updateVitalSigns(id, validatedData);
-
-    return res.status(200).json({
-      success: true,
-      message: "Амин үзүүлэлтийн мэдээлэл амжилттай шинэчлэгдлээ!",
-      data: updatedVitalSigns,
-    });
-  } catch (error) {
-    return handleZodOrAppError(res, error);
-  }
-};
-
-export const deleteVitalSignsById = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const staffId = req.user.id;
-
-    const result = await removeVitalSigns(id, staffId);
-
-    return res.status(200).json(result);
-  } catch (error) {
-    return handleZodOrAppError(res, error);
-  }
-};
-
-export const getPatientVitalSignsList = async (req, res) => {
-  try {
-    const { patientId } = req.params;
-    const { limit } = req.query;
-
-    const vitalSigns = await getPatientVitalSignsHistory(
-      patientId,
-      parseInt(limit) || 0
-    );
-
-    return res.status(200).json({
-      success: true,
-      count: vitalSigns.length,
-      data: vitalSigns,
-    });
-  } catch (error) {
-    return handleZodOrAppError(res, error);
-  }
-};
-
-export const getPatientLatestVitalSigns = async (req, res) => {
-  try {
-    const { patientId } = req.params;
-    const vitalSigns = await getLatestVitalSigns(patientId);
-
-    return res.status(200).json({
-      success: true,
-      data: vitalSigns,
-    });
-  } catch (error) {
-    return handleZodOrAppError(res, error);
-  }
-};
-
-export const getPatientVitalSignsByDateRange = async (req, res) => {
-  try {
-    const { patientId } = req.params;
-    const { startDate, endDate } = req.query;
-
-    // Validate date range
-    const validatedDates = dateRangeSchema.parse({ startDate, endDate });
-
-    const vitalSigns = await getVitalSignsByDateRange(
-      patientId,
-      validatedDates.startDate,
-      validatedDates.endDate
-    );
-
-    return res.status(200).json({
-      success: true,
-      count: vitalSigns.length,
-      data: vitalSigns,
-    });
-  } catch (error) {
-    return handleZodOrAppError(res, error);
-  }
-};
-
-export const getMyVitalSigns = async (req, res) => {
-  try {
-    const patientId = req.user.id;
-    const vitalSigns = await getPatientVitalSignsHistory(patientId);
-
-    return res.status(200).json({
-      success: true,
-      count: vitalSigns.length,
-      data: vitalSigns,
-    });
-  } catch (error) {
-    return handleZodOrAppError(res, error);
-  }
-};
-
-export const getMyLatestVitalSigns = async (req, res) => {
-  try {
-    const patientId = req.user.id;
-    const vitalSigns = await getLatestVitalSigns(patientId);
-
-    return res.status(200).json({
-      success: true,
-      data: vitalSigns,
-    });
-  } catch (error) {
-    return handleZodOrAppError(res, error);
-  }
-};
-
-export const getMyVitalSignsByStaff = async (req, res) => {
-  try {
-    const staffId = req.user.id;
-    const { limit } = req.query;
-
-    const vitalSigns = await getMedicalStaffVitalSigns(
-      staffId,
-      parseInt(limit) || 0
-    );
-
-    return res.status(200).json({
-      success: true,
-      count: vitalSigns.length,
-      data: vitalSigns,
-    });
-  } catch (error) {
-    return handleZodOrAppError(res, error);
-  }
-};
-const handleZodOrAppError = (res, error, fallbackStatus = 400) => {
-  if (error.name === "ZodError") {
-    const errors = error.errors.map((e) => ({
-      field: e.path[0],
-      message: e.message,
-    }));
-    return res.status(400).json({ errors });
-  }
-  const status = error.statusCode || fallbackStatus;
-  const message = error.message || "Something went wrong";
-  return res.status(status).json({ error: message });
-};
-
-// This function handles creating vital signs from the /vitalsigns/receive endpoint
-export const createVitalSignsFromIoT = async (data, req, res) => {
-  try {
-    const vitalSignsData = {
-      ...data,
-      medicalStaff: req.user.id
-    };
-    const vitalSigns = await addVitalSigns(vitalSignsData);
-
-    return vitalSigns;
-  } catch (error) {
-    return handleZodOrAppError(res, error);
-  }
-}
-  
+export default router;

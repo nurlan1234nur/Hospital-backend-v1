@@ -131,7 +131,6 @@ export const allergyUpdateSchema = z.object({
         : undefined;
     }, z.date())
     .optional(),
-    
 });
 
 export const chronicDiseaseSchema = z.object({
@@ -173,30 +172,63 @@ export const patientQuestionnaireResponseSchema = z.object({
 });
 
 export const vitalSignsSchema = z.object({
-  date: z.date().optional(),
-  concsiousness_status: z.string().optional(),
-  heart_rate: z.number().min(30).max(250).optional(),
-  blood_pressure: z.string().optional(),
-  temperature: z.number().min(30).max(45).optional(),
-  respiration_rate: z.number().min(5).max(60).optional(),
-  oxygen_saturation: z.number().min(50).max(100).optional(),
-  height: z.number().min(30).max(250).optional(),
-  weight: z.number().min(1).max(500).optional(),
-  patient: z.string().min(1, "Өвчтөний ID оруулна уу"),
-  medicalStaff: z.string().min(1, "Эмч/Сувилагчийн ID оруулна уу"),
+  vital_signs_id: z.number().min(1).optional(), // Optional, but if provided must be >= 1
+  date: z.date().optional(), // Optional date
+  concsiousness_status: z.string().optional(), // Optional string for consciousness status
+  
+  // Right side fields
+  right_diastolic: z.number().optional(),
+  right_mean_arterial_pressure: z.number().optional(),
+  right_heart_rate: z.number().optional(),
+  right_systolic: z.number().optional(),
+  right_note: z.string().optional(),
+  
+  // Left side fields
+  left_diastolic: z.number().optional(),
+  left_mean_arterial_pressure: z.number().optional(),
+  left_heart_rate: z.number().optional(),
+  left_systolic: z.number().optional(),
+  left_note: z.string().optional(),
+  
+  // General vital signs
+  temperature: z.number().optional(),
+  respiration_rate: z.number().optional(),
+  saturation: z.number().optional(), // Matching the "saturation" field from Mongoose model
+  height: z.number().optional(),
+  weight: z.number().optional(),
+  
+  // Relationships (referencing other models)
+  patient: z.string().min(1, "Өвчтөний ID оруулна уу"), // Must be a valid patient ID
+  medicalStaff: z.string().min(1, "Эмч/Сувилагчийн ID оруулна уу"), // Must be a valid medical staff ID
 });
 
 export const vitalSignsUpdateSchema = z.object({
   staffId: z.string().optional(), // Used for verification, not for storing
-  date: z.date().optional(),
-  concsiousness_status: z.string().optional(),
-  heart_rate: z.number().min(30).max(250).optional(),
-  blood_pressure: z.string().optional(),
-  temperature: z.number().min(30).max(45).optional(),
-  respiration_rate: z.number().min(5).max(60).optional(),
-  oxygen_saturation: z.number().min(50).max(100).optional(),
-  height: z.number().min(30).max(250).optional(),
-  weight: z.number().min(1).max(500).optional(),
+  
+  // General vital signs fields
+  date: z.date().optional(),  // Optional date field (for updates)
+  concsiousness_status: z.string().optional(), // Optional field for consciousness status
+  
+  // Right side fields
+  right_diastolic: z.number().optional(),
+  right_mean_arterial_pressure: z.number().optional(),
+  right_heart_rate: z.number().optional(),
+  right_systolic: z.number().optional(),
+  right_note: z.string().optional(),
+  
+  // Left side fields
+  left_diastolic: z.number().optional(),
+  left_mean_arterial_pressure: z.number().optional(),
+  left_heart_rate: z.number().optional(),
+  left_systolic: z.number().optional(),
+  left_note: z.string().optional(),
+  
+  // Additional general fields
+  temperature: z.number().optional(),
+  respiration_rate: z.number().optional(),
+  oxygen_saturation: z.number().optional(),
+  height: z.number().optional(),
+  weight: z.number().optional(),
 });
 
 export const dateRangeSchema = z.object({
