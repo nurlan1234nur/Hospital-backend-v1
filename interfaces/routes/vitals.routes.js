@@ -22,51 +22,6 @@ router.use(authenticateJWT);
 
 router.post("/vitalsigns", authorizeRole(["MedicalStaff"]), createVitalSigns);
 
-router.post(
-  "/vitalsigns/receive",
-  authorizeRole(["MedicalStaff", "Admin"]),
-  async (req, res) => {
-    try {
-      const { diastolic, meanArterialPressure, pulseRate, systolic } = req.body;
-
-      if (!diastolic || !systolic || !pulseRate) {
-        return res.status(400).json({ message: "Missing required fields" });
-      }
-
-      // Generate a unique vital_signs_id if not provided
-      const vital_signs_id = Date.now() + Math.floor(Math.random() * 1000);
-
-      // Create a new vital signs record with only the blood pressure data
-      const newVitalSign = new VitalSigns({
-        vital_signs_id: vital_signs_id,
-        right_diastolic: diastolic,
-        right_mean_arterial_pressure: meanArterialPressure,
-        right_heart_rate: pulseRate,
-        right_systolic: systolic,
-        medicalStaff: req.user.id,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now()
-      });
-
-      await newVitalSign.save();
-
-      res.status(201).json({ 
-        message: "Vital signs received successfully",
-        data: {
-          systolic: systolic,
-          diastolic: diastolic,
-          mean_arterial_pressure: meanArterialPressure,
-          heart_rate: pulseRate
-        }
-      });
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ message: "Failed to save vital signs data", error: err.message });
-    }
-  }
-);
-
-// Update the /vitalsigns/latest endpoint
 router.get(
   '/vitalsigns/latest',
   authorizeRole(['Patient', 'MedicalStaff', 'Admin']),
@@ -155,6 +110,50 @@ router.get(
     next();
   },
   getPatientVitalSignsByDateRange
+);
+
+router.post(
+  "/vitalsigns/receive",
+  authorizeRole(["MedicalStaff", "Admin"]),
+  async (req, res) => {
+    try {
+      const { diastolic, meanArterialPressure, pulseRate, systolic } = req.body;
+
+      if (!diastolic || !systolic || !pulseRate) {
+        return res.status(400).json({ message: "Missing required fields" });
+      }
+
+      // Generate a unique vital_signs_id if not provided
+      const vital_signs_id = Date.now() + Math.floor(Math.random() * 1000);
+
+      // Create a new vital signs record with only the blood pressure data
+      const newVitalSign = new VitalSigns({
+        vital_signs_id: vital_signs_id,
+        right_diastolic: diastolic,
+        right_mean_arterial_pressure: meanArterialPressure,
+        right_heart_rate: pulseRate,
+        right_systolic: systolic,
+        medicalStaff: req.user.id,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now()
+      });
+
+      await newVitalSign.save();
+
+      res.status(201).json({ 
+        message: "Vital signs received successfully",
+        data: {
+          systolic: systolic,
+          diastolic: diastolic,
+          mean_arterial_pressure: meanArterialPressure,
+          heart_rate: pulseRate
+        }
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Failed to save vital signs data", error: err.message });
+    }
+  }
 );
 
 export default router;
