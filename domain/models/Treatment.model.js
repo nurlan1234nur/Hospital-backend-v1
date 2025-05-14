@@ -5,7 +5,11 @@ const TreatmentSchema = new Schema(
     date: { type: Date },
     treatmentType: {
       type: String,
-      enum: ["Uvch", "Bumba", "Sharlaga", "Dusal", "Taria"],
+      enum: ["Uvch", "Dusal Taria", "Sudas Taria",
+       "Bulchin Taria", "Arisan dotor taria","Arisan dor taria",
+       "Massajnii sandal","Ulaan gerel","Ulitrazvuk","Lazer",
+      "Biotens","Limfodrenajnii massaj","Electroforez",
+    "Bichil hanuur","Huchilturugch","Mes zasliin boolt"],
     },
     diagnosisType: { type: String, enum: ["in", "out"] },
     totalQuantity: { type: Number },
