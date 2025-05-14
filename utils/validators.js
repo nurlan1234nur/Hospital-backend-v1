@@ -271,25 +271,29 @@ export const prescribedGuideUpdateSchema = z.object({
 
 export const medicineSchema = z.object({
   name: z.string().min(1, "Эмийн нэр оруулна уу"),
-  dosage: z.string().min(1, "Тун оруулна уу"),
+  type: z.enum(["medication", "Supplies", "Creams", "Emergency Items"], {
+    required_error: "Төрөл заавал шаардлагатай",
+  }),
+  dosage: z.string().optional(),
   price: z.number().min(0, "Үнэ 0-ээс их байх ёстой"),
-  quantity: z.number().int().min(0, "Тоо хэмжээ 0-ээс их байх ёстой"),
+  quantity: z.number().int().min(1, "Тоо хэмжээ 1-ээс их байх ёстой"),
   expiryDate: z
     .preprocess((arg) => {
       return typeof arg === "string" || arg instanceof Date
         ? new Date(arg)
         : undefined;
-    }, z.date())
-    .optional(),
+    }, z.date()),
   medicalStaff: z.string().min(1, "Эмч/Сувилагчийн ID оруулна уу"),
+  // med_id is auto-generated, so don't include it in validation
 });
 
 export const medicineUpdateSchema = z.object({
   staffId: z.string().optional(), // Used for verification, not for storing
   name: z.string().min(1, "Эмийн нэр оруулна уу").optional(),
-  dosage: z.string().min(1, "Тун оруулна уу").optional(),
+  type: z.enum(["medication", "Supplies", "Creams", "Emergency Items"]).optional(),
+  dosage: z.string().optional(),
   price: z.number().min(0, "Үнэ 0-ээс их байх ёстой").optional(),
-  quantity: z.number().int().min(0, "Тоо хэмжээ 0-ээс их байх ёстой").optional(),
+  quantity: z.number().int().min(1, "Тоо хэмжээ 1-ээс их байх ёстой").optional(),
   expiryDate: z
     .preprocess((arg) => {
       return typeof arg === "string" || arg instanceof Date
@@ -297,6 +301,7 @@ export const medicineUpdateSchema = z.object({
         : undefined;
     }, z.date())
     .optional(),
+  // med_id should not be updatable
 });
 
 // Stock Validators
