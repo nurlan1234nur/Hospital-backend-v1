@@ -10,8 +10,11 @@ import { createError } from "../../utils/error.js";
 
 export const createUserUseCases = () => {
   const hashPassword = async (password) => {
+    if (!password || typeof password !== "string") {
+      throw createError("Нууц үг буруу байна!", 400);
+    }
     const salt = await bcrypt.genSalt(10);
-    return await bcrypt.hash(password, salt);
+    return bcrypt.hash(password, salt);
   };
 
   const registerAdmin = async ({
@@ -21,10 +24,10 @@ export const createUserUseCases = () => {
     password,
     phoneNumber,
   }) => {
+    if (!email || !password) throw createError("Имэйл/нууц үг шаардлагатай!", 400);
+
     const existingUser = await findUserByEmail(email);
-    if (existingUser) {
-      throw createError("Имэйл бүртгэгдсэн байна!", 409);
-    }
+    if (existingUser) throw createError("Имэйл бүртгэгдсэн байна!", 409);
 
     const hashedPassword = await hashPassword(password);
 
@@ -33,9 +36,8 @@ export const createUserUseCases = () => {
       lastname,
       email,
       phoneNumber,
-      password: hashedPassword,
+      password_hash: hashedPassword, // ✅
     });
-
     const payload = { id: admin._id, role: admin.role };
     const accessToken = generateAccessToken(payload);
     const refreshToken = generateRefreshToken(payload);
@@ -44,15 +46,28 @@ export const createUserUseCases = () => {
   };
 
   const login = async ({ email, password }) => {
-    const user = await findUserByEmail(email);
-    if (!user) {
-      throw createError("Нэвтрэх нэр эсвэл нууц үг буруу байна!", 401);
-    }
+    if (!email || !password) throw createError("Имэйл/нууц үг шаардлагатай!", 400);
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      throw createError("Нэвтрэх нэр эсвэл нууц үг буруу байна!", 401);
-    }
+    const user = await findUserByEmail(email);
+
+    if (!user) throw createError("Hereglegch oldsongui!", 401);
+    console.log("keys:", Object.keys(user.toObject?.() ?? user));
+
+    console.log("raw user:", user);
+    console.log("toObject:", user.toObject());
+    console.log("json:", user.toJSON?.());
+    console.log("direct:", user.password_hash);
+    console.log("get:", user.get?.("password_hash"));
+
+    const hash = user.get("password_hash");
+    if (!hash) throw createError("Хэрэглэгчийн password hash олдсонгүй!", 500);
+
+    const isPasswordValid = await bcrypt.compare(password.trim(), hash);
+    if (!isPasswordValid) throw createError("COMPARE FALSE!", 401);
+
+
+    console.log("JWT_ACCESS_SECRET:", !!process.env.JWT_SECRET);
+    console.log("JWT_REFRESH_SECRET:", !!process.env.REFRESH_SECRET); 
 
     const payload = { id: user._id, role: user.role };
     const accessToken = generateAccessToken(payload);
@@ -69,10 +84,10 @@ export const createUserUseCases = () => {
     phoneNumber,
     specialization,
   }) => {
+    if (!email || !password) throw createError("Имэйл/нууц үг шаардлагатай!", 400);
+
     const existingUser = await findUserByEmail(email);
-    if (existingUser) {
-      throw createError("Имэйл бүртгэгдсэн байна!", 409);
-    }
+    if (existingUser) throw createError("Имэйл бүртгэгдсэн байна!", 409);
 
     const hashedPassword = await hashPassword(password);
 
@@ -81,7 +96,7 @@ export const createUserUseCases = () => {
       lastname,
       email,
       phoneNumber,
-      password: hashedPassword,
+      password_hash: hashedPassword, // ✅
       specialization,
       position: "Doctor",
     });
@@ -101,10 +116,10 @@ export const createUserUseCases = () => {
     phoneNumber,
     specialization,
   }) => {
+    if (!email || !password) throw createError("Имэйл/нууц үг шаардлагатай!", 400);
+
     const existingUser = await findUserByEmail(email);
-    if (existingUser) {
-      throw createError("Имэйл бүртгэгдсэн байна!", 409);
-    }
+    if (existingUser) throw createError("Имэйл бүртгэгдсэн байна!", 409);
 
     const hashedPassword = await hashPassword(password);
 
@@ -113,7 +128,7 @@ export const createUserUseCases = () => {
       lastname,
       email,
       phoneNumber,
-      password: hashedPassword,
+      password_hash: hashedPassword, // ✅
       specialization,
       position: "Nurse",
     });
@@ -141,10 +156,10 @@ export const createUserUseCases = () => {
     birthOfDate,
     gender,
   }) => {
+    if (!email || !password) throw createError("Имэйл/нууц үг шаардлагатай!", 400);
+
     const existingUser = await findUserByEmail(email);
-    if (existingUser) {
-      throw createError("Имэйл бүртгэгдсэн байна!", 409);
-    }
+    if (existingUser) throw createError("Имэйл бүртгэгдсэн байна!", 409);
 
     const hashedPassword = await hashPassword(password);
 
@@ -153,7 +168,7 @@ export const createUserUseCases = () => {
       lastname,
       email,
       phoneNumber,
-      password: hashedPassword,
+      password_hash: hashedPassword, // ✅
       type,
       register,
       address,
@@ -168,6 +183,7 @@ export const createUserUseCases = () => {
     const payload = { id: patient._id, role: patient.role };
     const accessToken = generateAccessToken(payload);
     const refreshToken = generateRefreshToken(payload);
+
     return { accessToken, refreshToken, patient };
   };
 
