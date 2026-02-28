@@ -32,9 +32,9 @@ jobs:
           context: .
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/hospital-backend:latest
-          
+
   k3s:
-    runs-on: [self-hosted, linux]
+    runs-on: [self-hosted, Linux, X64]
     needs: [build-and-deploy]
 
     env:
