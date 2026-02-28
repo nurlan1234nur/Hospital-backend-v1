@@ -46,7 +46,7 @@ if (!MONGO_URI) {
   console.error("Missing MONGO_URI! Check your .env file.");
   process.exit(1);
 }
-//up
+//
 mongoose
   .connect(MONGO_URI)
   .then(() => console.log("MongoDB Connected"))
