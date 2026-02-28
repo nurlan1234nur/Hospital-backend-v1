@@ -19,7 +19,7 @@ spec:
         ports:
         - containerPort: 8000   
         env:
-        - name: MONGODB_URI
+        - name: MONGO_URI
           valueFrom:
             secretKeyRef:
               name: hospital-secrets
