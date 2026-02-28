@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hospital-backend
+  namespace: num
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hospital-backend
+  template:
+    metadata:
+      labels:
+        app: hospital-backend
+    spec:
+      containers:
+      - name: hospital-backend
+        image: nurlannn/hospital-backend:latest
+        ports:
+        - containerPort: 8000   
+        env:
+        - name: MONGODB_URI
+          valueFrom:
+            secretKeyRef:
+              name: hospital-secrets
+              key: mongodb_uri
+        resources:
+          requests:
+            memory: "32Mi"
+            cpu: "100m"
+          limits:
+            memory: "100Mi"
+            cpu: "250m"
