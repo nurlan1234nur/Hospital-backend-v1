@@ -52,6 +52,9 @@ mongoose
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
+app.use("/", (req, res) =>
+res.send("OK"));
+
 app.use("/api/auth", AuthRouter);
 app.use("/api/allergy", AllergyRouter);
 app.use("/api/patient", PatientRouter);
